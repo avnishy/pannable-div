@@ -1,0 +1,94 @@
+.resizable-draggable {
+    outline: 1px solid #154c79;
+    position: absolute;
+    &.active {
+        outline-style: solid;
+        outline: 7px solid orange;
+    }
+
+    &:hover {
+        cursor: all-scroll;
+    }
+
+    span:first-of-type {
+        position: absolute;
+        left: 50%;
+        transform: translate3d(-50%, -100%, 0);
+    }
+
+    span:nth-of-type(2) {
+        position: absolute;
+        top: 50%;
+        transform: translate3d(-100%, -50%, 0);
+    }
+
+    span:nth-of-type(3) {
+        position: absolute;
+        transform: translate3d(-100%, -100%, 0);
+    }
+}
+
+.resize-action {
+    position: absolute;
+    left: 100%;
+    top: 100%;
+    transform: translate3d(-50%, -50%, 0) rotateZ(45deg);
+    border-style: solid;
+    border-width: 8px;
+    border-color: transparent transparent transparent orange;
+    &:hover,
+    &:active {
+        cursor: nwse-resize;
+    }
+}
+
+.resize-action-top-left {
+    position: absolute;
+    left: 0%;
+    top: 0%;
+    transform: translate3d(-50%, -50%, 0) rotateZ(225deg);
+    border-style: solid;
+    border-width: 8px;
+    border-color: transparent transparent transparent orange;
+    &:hover, &:active {
+        cursor: nwse-resize;
+    }
+}
+.resize-action-top-right {
+    position: absolute;
+    left: 100%;
+    top: 0%;
+    transform: translate3d(-50%, -50%, 0) rotateZ(315deg);
+    border-style: solid;
+    border-width: 8px;
+    border-color: transparent transparent transparent orange;
+    &:hover, &:active {
+        cursor: nesw-resize;
+    }
+}
+.resize-action-bottom-left {
+    position: absolute;
+    left: 0%;
+    top: 100%;
+    transform: translate3d(-50%, -50%, 0) rotateZ(135deg);
+    border-style: solid;
+    border-width: 8px;
+    border-color: transparent transparent transparent orange;
+    &:hover, &:active {
+        cursor: nesw-resize;
+    }
+}
+
+.color-card,
+.image-card {
+    height: 100%;
+    width: 100%;
+}
+
+.image-card {
+    object-fit: cover;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+}

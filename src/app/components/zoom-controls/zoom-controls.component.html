@@ -1,0 +1,26 @@
+<div class="wrapper">
+    <div class="d-flex" (click)="zoomOut.emit()">-</div>
+    <div class="zoom-selection" (click)="handleLevelDisplay()">
+        {{ zoomLevel * 100 | number: '1.0-0' }} %
+   </div>
+    <div class="d-flex" (click)="zoomIn.emit()">+</div>
+</div>
+
+<div *ngIf="showLevels" class="zoom-levels">
+    <div class="zoom-input">
+        <input type="text" autofocus [ngModel]="zoomLevel * 100 | number: '1.0-0'" (keydown.enter)="handleZoomInput($event)"  />
+    </div>
+    <div class="zoom-level" [class.selected]="zoomLevel === l" (click)="handleZoomTo(l)" *ngFor="let l of levels">
+        {{ l*100 }}%
+    </div>
+    <div class="zoom-level">
+        Zoom to fit
+    </div>
+</div>
+
+<!-- To dos
+    1. entering zoom levels 
+    2. zoom level selection when zoomed using trackpad/mouse wheel
+    3. ui - show dropdown icon 
+
+-->
