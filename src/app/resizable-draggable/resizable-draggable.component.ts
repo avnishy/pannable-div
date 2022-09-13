@@ -33,10 +33,10 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
   @Input() public card!: Card;
   @Input() public selected?= false;
   @Input() public translate!: { scale: number, translateX: number, translateY: number }; //TODO REMOVE UNEEDED
-  @Output() public translateChange = new EventEmitter<{scale: number, translateX: number, translateY: number}>(); //TODO REMOVE
+  @Output() public translateChange = new EventEmitter<{ scale: number, translateX: number, translateY: number }>(); //TODO REMOVE
   @Output() public updatePan = new EventEmitter<void>();
 
-  @Output() public scrollDistance = new EventEmitter<{scrollX: number, scrollY: number}>;
+  @Output() public scrollDistance = new EventEmitter<{ scrollX: number, scrollY: number }>;
 
   @Output() public clearSelection = new EventEmitter<void>();
 
@@ -64,7 +64,7 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
   public innerHeightScaled = 0;
   public innerWidthScaled = 0;
 
-  ngOnInit() { 
+  ngOnInit() {
     // set to pan then depending on where mouse is subscribe to the observable and track how long its held down for (calling the function)
     this.panTrigger = false;
 
@@ -81,7 +81,7 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
     this.loadBox();
     this.loadContainer();
   }
-  
+
   ngOnDestroy() {
     this.obs.unsubscribe();
   }
@@ -138,7 +138,7 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
   onMouseMove(event: MouseEvent) {
     this.mouse = { x: event.clientX * (1 / this.scale), y: event.clientY * (1 / this.scale) };
     this.boxPosition2 = this.box.nativeElement.getBoundingClientRect();
-    this.boxPosition2 = { left: this.boxPosition2.left / this.scale , top: this.boxPosition2.top * (1 / this.scale), right: this.boxPosition2.right * (1 / this.scale), bottom: this.boxPosition2.bottom * (1 / this.scale), width: this.boxPosition2.width * (1 / this.scale), height: this.boxPosition2.height * (1 / this.scale) }
+    this.boxPosition2 = { left: this.boxPosition2.left / this.scale, top: this.boxPosition2.top * (1 / this.scale), right: this.boxPosition2.right * (1 / this.scale), bottom: this.boxPosition2.bottom * (1 / this.scale), width: this.boxPosition2.width * (1 / this.scale), height: this.boxPosition2.height * (1 / this.scale) }
     if (this.status === Status.RESIZETOP) this.resizeTop();
     else if (this.status === Status.RESIZERIGHT) this.resizeRight();
     else if (this.status === Status.RESIZEBOTTOM) this.resizeBottom();
@@ -203,57 +203,57 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
 
   resizeRight(): void {
     // if(this.mouse.x + window.scrollX < this.boundaryScaled.right) {
-      const width = this.mouse.x - (this.boxPosition2.left);
-      const scaleUp = width / this.boxPosition2.width;
-      const height = this.boxPosition2.height * scaleUp;
-      // const boundHeight = height + this.boxPosition2.top;
+    const width = this.mouse.x - (this.boxPosition2.left);
+    const scaleUp = width / this.boxPosition2.width;
+    const height = this.boxPosition2.height * scaleUp;
+    // const boundHeight = height + this.boxPosition2.top;
 
-      //check in boundary
-      // if(boundHeight < this.boundaryScaled.bottom) {
-        //check not too small
-        if (width > this.minSize) {
-          this.card.width = width;
-          this.card.height = height;
-        }
-      // }
+    //check in boundary
+    // if(boundHeight < this.boundaryScaled.bottom) {
+    //check not too small
+    if (width > this.minSize) {
+      this.card.width = width;
+      this.card.height = height;
+    }
+    // }
     // }
   }
 
   resizeLeft(): void {
 
-      const width = this.boxPosition2.width + (this.boxPosition2.left - this.mouse.x);
-      const scaleUp = width / this.boxPosition2.width;
-      const height = this.boxPosition2.height * scaleUp;
-  
-      if (width > this.minSize) {
-        this.card.width = width;
-        this.card.height = height;
-        this.card.x = this.mouse.x + (window.scrollX * (1/this.scale));
-      }
+    const width = this.boxPosition2.width + (this.boxPosition2.left - this.mouse.x);
+    const scaleUp = width / this.boxPosition2.width;
+    const height = this.boxPosition2.height * scaleUp;
+
+    if (width > this.minSize) {
+      this.card.width = width;
+      this.card.height = height;
+      this.card.x = this.mouse.x + (window.scrollX * (1 / this.scale));
+    }
   }
 
   resizeBottom(): void { //TODO: Update to correct type for nativeElement
-      const height = this.mouse.y - this.boxPosition2.top;
-      const scaleUp = height / this.boxPosition2.height;
-      const width = this.boxPosition2.width * scaleUp;
-  
-      if (height > this.minSize) {
-        this.card.width = width;
-        this.card.height = height;
-      }
+    const height = this.mouse.y - this.boxPosition2.top;
+    const scaleUp = height / this.boxPosition2.height;
+    const width = this.boxPosition2.width * scaleUp;
+
+    if (height > this.minSize) {
+      this.card.width = width;
+      this.card.height = height;
+    }
   }
 
   resizeTop(): void { //TODO: Update to correct type for nativeElement
-    
-      const height = this.boxPosition2.height + (this.boxPosition2.top - this.mouse.y);
-      const scaleUp = height / this.boxPosition2.height;
-      const width = this.boxPosition2.width * scaleUp;
-      
-        if (height > this.minSize) {
-          this.card.width = width;
-          this.card.height = height;
-          this.card.y = this.mouse.y + (window.scrollY * (1/this.scale));
-        }
+
+    const height = this.boxPosition2.height + (this.boxPosition2.top - this.mouse.y);
+    const scaleUp = height / this.boxPosition2.height;
+    const width = this.boxPosition2.width * scaleUp;
+
+    if (height > this.minSize) {
+      this.card.width = width;
+      this.card.height = height;
+      this.card.y = this.mouse.y + (window.scrollY * (1 / this.scale));
+    }
   }
 
   private resizeCondMeet() {
@@ -282,25 +282,25 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
   //Updates the translation on the parent (canvas) to reflect state of panned board
   //TODO unecessary can remove
   updateTranslation() {
-    this.translateChange.emit({scale: this.translate.scale, translateX: this.translate.translateX, translateY: this.translate.translateY});
+    this.translateChange.emit({ scale: this.translate.scale, translateX: this.translate.translateX, translateY: this.translate.translateY });
     this.updatePan.emit();
   }
 
-  scrollCanvas(x: number, y:number) {
-    this.scrollDistance.emit({scrollX: x, scrollY: y});
+  scrollCanvas(x: number, y: number) {
+    this.scrollDistance.emit({ scrollX: x, scrollY: y });
   }
 
   scrollX(panSpeed: number) {
-    this.card.x = this.card.x + panSpeed * (1 /this.scale);
-    this.mouseClick.left = this.mouseClick.left + panSpeed * (1 /this.scale);
-    this.boxPosition2.left = this.boxPosition2.left + panSpeed * (1 /this.scale);
+    this.card.x = this.card.x + panSpeed * (1 / this.scale);
+    this.mouseClick.left = this.mouseClick.left + panSpeed * (1 / this.scale);
+    this.boxPosition2.left = this.boxPosition2.left + panSpeed * (1 / this.scale);
   }
 
-    //Pans the canvas on the y axis while updating cards position and mouseclick for movement/resizing //negative number for up positive for down
+  //Pans the canvas on the y axis while updating cards position and mouseclick for movement/resizing //negative number for up positive for down
   scrollY(panSpeed: number) {
-    this.card.y = this.card.y + panSpeed * (1 /this.scale);
-    this.mouseClick.top = this.mouseClick.top + panSpeed * (1 /this.scale);
-    this.boxPosition2.top = this.boxPosition2.top + panSpeed * (1 /this.scale);
+    this.card.y = this.card.y + panSpeed * (1 / this.scale);
+    this.mouseClick.top = this.mouseClick.top + panSpeed * (1 / this.scale);
+    this.boxPosition2.top = this.boxPosition2.top + panSpeed * (1 / this.scale);
   }
-  
+
 }

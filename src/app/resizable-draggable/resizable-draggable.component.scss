@@ -1,6 +1,7 @@
 .resizable-draggable {
     outline: 1px solid #154c79;
     position: absolute;
+
     &.active {
         outline-style: solid;
         outline: 7px solid orange;
@@ -36,6 +37,7 @@
     border-style: solid;
     border-width: 8px;
     border-color: transparent transparent transparent orange;
+
     &:hover,
     &:active {
         cursor: nwse-resize;
@@ -50,10 +52,13 @@
     border-style: solid;
     border-width: 8px;
     border-color: transparent transparent transparent orange;
-    &:hover, &:active {
+
+    &:hover,
+    &:active {
         cursor: nwse-resize;
     }
 }
+
 .resize-action-top-right {
     position: absolute;
     left: 100%;
@@ -62,10 +67,13 @@
     border-style: solid;
     border-width: 8px;
     border-color: transparent transparent transparent orange;
-    &:hover, &:active {
+
+    &:hover,
+    &:active {
         cursor: nesw-resize;
     }
 }
+
 .resize-action-bottom-left {
     position: absolute;
     left: 0%;
@@ -74,7 +82,9 @@
     border-style: solid;
     border-width: 8px;
     border-color: transparent transparent transparent orange;
-    &:hover, &:active {
+
+    &:hover,
+    &:active {
         cursor: nesw-resize;
     }
 }
@@ -101,10 +111,13 @@
     border-style: solid;
     border-width: 8px;
     border-color: transparent transparent transparent orange;
-    &:hover, &:active {
+
+    &:hover,
+    &:active {
         cursor: n-resize;
     }
 }
+
 .resize-action-right {
     position: absolute;
     left: 100%;
@@ -113,10 +126,13 @@
     border-style: solid;
     border-width: 8px;
     border-color: transparent transparent transparent orange;
-    &:hover, &:active {
+
+    &:hover,
+    &:active {
         cursor: w-resize;
     }
 }
+
 .resize-action-bottom {
     position: absolute;
     left: 50%;
@@ -125,10 +141,13 @@
     border-style: solid;
     border-width: 8px;
     border-color: transparent transparent transparent orange;
-    &:hover, &:active {
+
+    &:hover,
+    &:active {
         cursor: s-resize;
     }
 }
+
 .resize-action-left {
     position: absolute;
     left: 0%;
@@ -143,6 +162,7 @@
     border-style: solid;
     border-width: 8px;
     border-color: transparent transparent transparent orange;
+
     &:hover,
     &:active {
         cursor: w-resize;

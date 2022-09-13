@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
   public selectionBox: { width: number, height: number, x: number, y: number } = { width: 0, height: 0, x: 0, y: 0 }
 
   public cards: Card[] = this.cardService.getCards();
-  
+
   public canvasHeight = 300;
   public canvasWidth = 300;
 
@@ -57,7 +57,7 @@ export class AppComponent implements OnInit {
   }
 
   public handleMousedown(event: MouseEvent): void {
-    this.prevMouse = {x: event.clientX, y: event.clientY};
+    this.prevMouse = { x: event.clientX, y: event.clientY };
     this.initialContentsPos.x = this.translate.translateX;
     this.initialContentsPos.y = this.translate.translateY;
     // this.pinnedMousePosition.x = event.clientX;
@@ -119,9 +119,9 @@ export class AppComponent implements OnInit {
         x: event.clientX,
         y: event.clientY
       };
-      
+
       //calculate the difference its moved
-      const diffXPan = -1 * (this.mouse.x - this.prevMouse.x); 
+      const diffXPan = -1 * (this.mouse.x - this.prevMouse.x);
       const diffYPan = -1 * (this.mouse.y - this.prevMouse.y);
       this.scrollPage(diffXPan, diffYPan); //scroll page by the difference 
       this.prevMouse.x = this.mouse.x;
@@ -205,7 +205,7 @@ export class AppComponent implements OnInit {
     // ctrlKey modifier is added when pinch gesture is performed on trackpad
     // need to validate if this works on mac
     const ctrlKeyPressed = event.ctrlKey || event.metaKey;
-    
+
     if (!ctrlKeyPressed) {
       return;
     }
@@ -288,5 +288,5 @@ export class AppComponent implements OnInit {
   public scrollPage(xamount: number, yamount: number) {
     window.scrollBy(xamount, yamount);
   }
-  
+
 }

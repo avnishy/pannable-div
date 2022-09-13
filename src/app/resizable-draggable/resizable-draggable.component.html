@@ -1,12 +1,8 @@
-<div #box class="resizable-draggable" 
-    [style.width.px]="card.width" 
-    [style.height.px]="card.height"
+<div #box class="resizable-draggable" [style.width.px]="card.width" [style.height.px]="card.height"
     [style.transform]="'translate3d('+ card.x + 'px,' + card.y + 'px,' + '0px)'"
     [class.active]="status === 1 || status === 2 || status === 31 || status === 32 || status === 33 || status === 34"
-    (mousedown)="setStatus($event, 2)"
-    (window:mouseup)="setStatus($event, 0)"
-    (window:mousedown)="setMouseClick($event)"
->
+    (mousedown)="setStatus($event, 2)" (window:mouseup)="setStatus($event, 0)"
+    (window:mousedown)="setMouseClick($event)">
 
     <!-- <div class="resize-action" (mousedown)="setStatus($event, 1)"></div>
     <div class="resize-action-top-left" (mousedown)="setStatus($event, 3)"></div>
