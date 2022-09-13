@@ -92,3 +92,59 @@
     -moz-user-drag: none;
     -o-user-drag: none;
 }
+
+.resize-action-top {
+    position: absolute;
+    left: 50%;
+    top: 0%;
+    // transform: translate3d(-50%, -50%, 0) rotateZ(90deg);
+    border-style: solid;
+    border-width: 8px;
+    border-color: transparent transparent transparent orange;
+    &:hover, &:active {
+        cursor: n-resize;
+    }
+}
+.resize-action-right {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    // transform: translate3d(-50%, -50%, 0) rotateZ(315deg);
+    border-style: solid;
+    border-width: 8px;
+    border-color: transparent transparent transparent orange;
+    &:hover, &:active {
+        cursor: w-resize;
+    }
+}
+.resize-action-bottom {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    // transform: translate3d(-50%, -50%, 0) rotateZ(135deg);
+    border-style: solid;
+    border-width: 8px;
+    border-color: transparent transparent transparent orange;
+    &:hover, &:active {
+        cursor: s-resize;
+    }
+}
+.resize-action-left {
+    position: absolute;
+    left: 0%;
+    top: 50%;
+    // width: 20px;
+    // height: 20px;
+    // border-radius: 0;
+    // border: 3px solid #4286f4;
+    // background: white;
+    // box-sizing: border-box;
+    // transform: translate3d(-50%, -50%, 0) rotateZ(45deg);
+    border-style: solid;
+    border-width: 8px;
+    border-color: transparent transparent transparent orange;
+    &:hover,
+    &:active {
+        cursor: w-resize;
+    }
+}

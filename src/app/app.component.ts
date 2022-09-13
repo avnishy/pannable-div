@@ -46,7 +46,7 @@ export class AppComponent implements OnInit {
   public canvasHeight = 300;
   public canvasWidth = 300;
 
-  public prevMouse = {x: 0, y: 0};
+  public prevMouse = { x: 0, y: 0 };
 
   constructor(private cardService: CardService) { }
 
@@ -75,8 +75,8 @@ export class AppComponent implements OnInit {
 
 
     if (
-      (x > this.selectionBox.x && (x < (this.selectionBox.x + this.selectionBox.width))) &&
-      (y > this.selectionBox.y && (y < (this.selectionBox.y + this.selectionBox.height)))
+      ((x + window.scrollX) > this.selectionBox.x && ((x + window.scrollX) < (this.selectionBox.x + this.selectionBox.width))) &&
+      ((y + window.scrollY) > this.selectionBox.y && ((y + window.scrollY) < (this.selectionBox.y + this.selectionBox.height)))
     ) {
       this.cards.forEach((c) => {
         c.selected = this.selection.some(sc => sc.id === c.id);
@@ -245,8 +245,8 @@ export class AppComponent implements OnInit {
     this.selectionBox = {
       width: Math.abs(this.mouse.x - this.mouseClick.x),
       height: Math.abs(this.mouse.y - this.mouseClick.y),
-      x: left,
-      y: top
+      x: left + window.scrollX,
+      y: top + window.scrollY
     };
   }
 
