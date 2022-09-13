@@ -42,6 +42,11 @@ export class AppComponent implements OnInit {
   public selectionBox: { width: number, height: number, x: number, y: number } = { width: 0, height: 0, x: 0, y: 0 }
 
   public cards: Card[] = this.cardService.getCards();
+  
+  public canvasHeight = 300;
+  public canvasWidth = 300;
+
+  public prevMouse = {x: 0, y: 0};
 
   constructor(private cardService: CardService) { }
 
@@ -52,6 +57,7 @@ export class AppComponent implements OnInit {
   }
 
   public handleMousedown(event: MouseEvent): void {
+    this.prevMouse = {x: event.clientX, y: event.clientY};
     this.initialContentsPos.x = this.translate.translateX;
     this.initialContentsPos.y = this.translate.translateY;
     // this.pinnedMousePosition.x = event.clientX;
@@ -102,6 +108,7 @@ export class AppComponent implements OnInit {
       y: event.clientY * (1 / this.scale) - this.translate.translateY * (1 / this.scale)
     };
 
+
     if (this.selection.length && this.status === Status.MOVE) {
       this.selectionBox.x = this.mouseClick.left + (this.mouse.x - this.mouseClick.x);
       this.selectionBox.y = this.mouseClick.top + (this.mouse.y - this.mouseClick.y);
@@ -112,12 +119,13 @@ export class AppComponent implements OnInit {
         x: event.clientX,
         y: event.clientY
       };
-
-      const diffX = (this.mouse.x - this.mouseClick.x);
-      const diffY = (this.mouse.y - this.mouseClick.y);
-
-      this.translate.translateX = this.initialContentsPos.x + diffX;
-      this.translate.translateY = this.initialContentsPos.y + diffY;
+      
+      //calculate the difference its moved
+      const diffXPan = -1 * (this.mouse.x - this.prevMouse.x); 
+      const diffYPan = -1 * (this.mouse.y - this.prevMouse.y);
+      this.scrollPage(diffXPan, diffYPan); //scroll page by the difference 
+      this.prevMouse.x = this.mouse.x;
+      this.prevMouse.y = this.mouse.y; //update previous x & y values
       this.update();
     } else if (!this.panningEnabled && this.isSelecting) {
       this.drawSelectionBox();
@@ -264,4 +272,21 @@ export class AppComponent implements OnInit {
 
     return true;
   }
+
+  panFromCard() {
+    this.update();
+  }
+
+  public updateCanvasWidth(amount: number) {
+    this.canvasWidth = this.canvasWidth += amount;
+  }
+
+  public updateCanvasHeight(amount: number) {
+    this.canvasHeight = this.canvasHeight += amount;
+  }
+
+  public scrollPage(xamount: number, yamount: number) {
+    window.scrollBy(xamount, yamount);
+  }
+  
 }

@@ -10,15 +10,17 @@
 </app-zoom-controls>
 
 <div class="grid" [class.pannable]="panningEnabled" (mousedown)="handleMousedown($event)" (window:mousemove)="handleMousemove($event)"
-    (mouseup)="handleMouseup($event)">
+    (mouseup)="handleMouseup($event)" [style.width.vw]="canvasWidth" [style.height.vh]="canvasHeight">
 
     <div class="contents" #contents>
         <app-resizable-draggable *ngFor="let card of cards"            
             [scale]="translate.scale" 
-            [translate]="translate"
+            [(translate)]="translate"
             [card]="card"
             [selected]="card.selected"
-            (clearSelection)="clearSelection()">
+            (clearSelection)="clearSelection()"
+            (scrollDistance)="scrollPage($event.scrollX, $event.scrollY)"
+            (updatePan)="panFromCard()">
             <!-- TODO -->
             <!-- track by -->
             
