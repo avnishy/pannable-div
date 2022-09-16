@@ -1,41 +1,57 @@
 <div class="action-holder">
     <button id="pan-mode" class="mb-10" (click)="togglePanMode()">pan mode - {{panningEnabled}}</button>
+    <!-- <button id="" class="mb-10" (click)="bringToFront(1)">Bring to Front Orange</button>
+    <button id="" class="mb-10" (click)="bringToFront(2)">Bring to Front Blue</button>
+    <button id="" class="mb-10" (click)="bringToFront(3)">Bring to Front Red</button>
+    <button id="" class="mb-10" (click)="bringToFront(4)">Bring to Front Image</button>
+    <button id="" class="mb-10" (click)="sendToBack(1)">Send to Back Orange</button>
+    <button id="" class="mb-10" (click)="sendToBack(2)">Send to Back Blue</button>
+    <button id="" class="mb-10" (click)="sendToBack(3)">Send to Back Red</button>
+    <button id="" class="mb-10" (click)="sendToBack(4)">Send to Back Image</button>
+    <button id="" class="mb-10" (click)="sendToBack(4)">Send to Back Image</button> -->
 </div>
 
-<app-zoom-controls [zoomLevel]="scale" (zoomIn)="handleZoomIn()" (zoomOut)="handleZoomOut()"
+<app-zoom-controls 
+    [zoomLevel]="scale"
+    (zoomIn)="handleZoomIn()" 
+    (zoomOut)="handleZoomOut()" 
     (zoomTo)="handleZoomTo($event)">
 </app-zoom-controls>
 
-<div class="grid" [class.pannable]="panningEnabled" (mousedown)="handleMousedown($event)"
-    (window:mousemove)="handleMousemove($event)" (mouseup)="handleMouseup($event)" [style.width.vw]="canvasWidth"
-    [style.height.vh]="canvasHeight">
+<div class="grid" [class.pannable]="panningEnabled" (mousedown)="handleMousedown($event)" (window:mousemove)="handleMousemove($event)"
+    (mouseup)="handleMouseup($event)" [style.width.vw]="canvasWidth" [style.height.vh]="canvasHeight">
 
     <div class="contents" #contents>
-        <app-resizable-draggable *ngFor="let card of cards" [scale]="translate.scale" [(translate)]="translate"
-            [card]="card" [selected]="card.selected" (clearSelection)="clearSelection()"
-            (scrollDistance)="scrollPage($event.scrollX, $event.scrollY)" (updatePan)="panFromCard()">
+        <app-resizable-draggable *ngFor="let card of cards"            
+            [scale]="scale" 
+            [card]="card"
+            [selected]="card.selected"
+            (clearSelection)="clearSelection()"
+            (scrollDistance)="scrollPage($event.scrollX, $event.scrollY)"
+            (updatePan)="panFromCard()">
             <!-- TODO -->
             <!-- track by -->
-
+            
             <ng-container [ngSwitch]="card.type">
                 <ng-container *ngSwitchCase="'color'" [ngTemplateOutlet]="colorCard"
                     [ngTemplateOutletContext]="{$implicit: card}"></ng-container>
                 <ng-container *ngSwitchCase="'image'" [ngTemplateOutlet]="imageCard"
                     [ngTemplateOutletContext]="{$implicit: card}"></ng-container>
             </ng-container>
+
+            <ng-template #colorCard let-card>
+                <div class="color-card" [style.backgroundColor]="card.color"></div>
+            </ng-template>
+    
+            <ng-template #imageCard let-card>
+                <img class="image-card" [src]="card.image" alt="">
+            </ng-template>
         </app-resizable-draggable>
 
-        <ng-template #colorCard let-card>
-            <div class="color-card" [style.backgroundColor]="card.color"></div>
-        </ng-template>
-
-        <ng-template #imageCard let-card>
-            <img class="image-card" [src]="card.image" alt="">
-        </ng-template>
-
-        <div [style.width.px]="selectionBox.width" [style.height.px]="selectionBox.height"
-            [style.transform]="'translate3d('+ selectionBox.x + 'px,' + selectionBox.y + 'px,' + '0px)'"
-            class="selection-rect">
+        <div [style.width.px]="selectionBox.width"
+             [style.height.px]="selectionBox.height"
+             [style.transform]="'translate3d('+ selectionBox.x + 'px,' + selectionBox.y + 'px,' + '0px)'"
+             class="selection-rect">
         </div>
     </div>
 </div>

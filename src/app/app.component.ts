@@ -28,8 +28,8 @@ export class AppComponent implements OnInit {
   public scale = 1;
   private scaleInterval = 0.1; // 10 % of scale value
 
-  public translate = { scale: this.scale, translateX: 0, translateY: 0 };
-  private initialContentsPos = { x: 0, y: 0 };
+  // public translate = { scale: this.scale, translateX: 0, translateY: 0 };
+  // private initialContentsPos = { x: 0, y: 0 };
   // private initialZoomPos = { x: 0, y: 0 };
   // private pinnedMousePosition = { x: 0, y: 0 };
   // mousePosition = { x: 0, y: 0 };
@@ -43,8 +43,10 @@ export class AppComponent implements OnInit {
 
   public cards: Card[] = this.cardService.getCards();
 
-  public canvasHeight = 300;
-  public canvasWidth = 300;
+  private originalCanvasHeight = 2000;
+  private originalCanvasWidth = 2000;
+  public canvasHeight = 2000;
+  public canvasWidth = 2000;
 
   public prevMouse = { x: 0, y: 0 };
 
@@ -58,13 +60,11 @@ export class AppComponent implements OnInit {
 
   public handleMousedown(event: MouseEvent): void {
     this.prevMouse = { x: event.clientX, y: event.clientY };
-    this.initialContentsPos.x = this.translate.translateX;
-    this.initialContentsPos.y = this.translate.translateY;
-    // this.pinnedMousePosition.x = event.clientX;
-    // this.pinnedMousePosition.y = event.clientY;
-
-    const x = event.clientX * (1 / this.scale) - this.translate.translateX * (1 / this.scale);
-    const y = event.clientY * (1 / this.scale) - this.translate.translateY * (1 / this.scale);
+    // this.initialContentsPos.x = this.translate.translateX;
+    // this.initialContentsPos.y = this.translate.translateY;
+    
+    const x = event.clientX * (1 / this.scale);
+    const y = event.clientY * (1 / this.scale);
 
     this.mouseClick = {
       x: x,
@@ -104,8 +104,8 @@ export class AppComponent implements OnInit {
 
   public handleMousemove(event: MouseEvent): void {
     this.mouse = {
-      x: event.clientX * (1 / this.scale) - this.translate.translateX * (1 / this.scale),
-      y: event.clientY * (1 / this.scale) - this.translate.translateY * (1 / this.scale)
+      x: event.clientX * (1 / this.scale),
+      y: event.clientY * (1 / this.scale)
     };
 
 
@@ -180,8 +180,8 @@ export class AppComponent implements OnInit {
     }
 
     this.scale -= scaleInterval;
-    this.translate.scale = this.scale;
-    this.update();
+    this.canvasHeight = this.originalCanvasHeight * this.scale; //make smaller
+    this.canvasWidth = this.originalCanvasWidth * this.scale;
   }
 
   public handleZoomIn(scaleInterval: number = this.scaleInterval): void {
@@ -190,14 +190,17 @@ export class AppComponent implements OnInit {
     }
 
     this.scale += scaleInterval;
-    this.translate.scale = this.scale;
+    this.canvasHeight = this.originalCanvasHeight * this.scale; //make bigger
+    this.canvasWidth = this.originalCanvasWidth * this.scale;
     this.update();
   };
 
   public handleZoomTo(scale: number): void {
     this.scale = scale;
-    this.translate.scale = this.scale;
+    this.canvasHeight = this.originalCanvasHeight * this.scale; 
+    this.canvasWidth = this.originalCanvasWidth * this.scale;
     this.update();
+    
   }
 
   @HostListener("wheel", ["$event"])
@@ -220,12 +223,23 @@ export class AppComponent implements OnInit {
     event.preventDefault();
   }
 
+  @HostListener('window:keyup ', ['$event'])
+  onKeyUp(event: KeyboardEvent) {
+    if (event.code === 'Space') {
+      event.preventDefault();
+      this.panningEnabled = false;
+    }
+  }
+
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
     const minus = 189;
     const plus = 187;
 
-    if ((event.key === '-' || event.which === minus) && (event.ctrlKey || event.metaKey)) {
+    if (event.code === 'Space' && event.target == document.body) {
+      this.panningEnabled = true;
+      event.preventDefault()
+    }else if ((event.key === '-' || event.which === minus) && (event.ctrlKey || event.metaKey)) {
       this.handleZoomOut();
       event.preventDefault();
     } else if ((event.key === '+' || event.which === plus) && (event.ctrlKey || event.metaKey)) {
@@ -235,10 +249,14 @@ export class AppComponent implements OnInit {
   }
 
   private update(): void {
-    const matrix = `matrix(${this.translate.scale},0,0,${this.translate.scale},${this.translate.translateX},${this.translate.translateY})`;
+    const matrix = `matrix(${this.scale},0,0,${this.scale},0,0)`;
     this.contents.nativeElement.style.transform = matrix;
   };
 
+  /**
+   * set the height, width, top and left attributes for selection box
+   * @returns void
+   */
   private drawSelectionBox(): void {
     const left = this.mouse.x > this.mouseClick.x ? this.mouseClick.x : this.mouse.x;
     const top = this.mouse.y > this.mouseClick.y ? this.mouseClick.y : this.mouse.y;
@@ -271,6 +289,25 @@ export class AppComponent implements OnInit {
     }
 
     return true;
+  }
+
+  sendToBack(indexToUpdate: number) {
+    this.cards.forEach((element, index) => {
+      if (element.z === indexToUpdate) {
+        this.cards.splice(index, 1);
+        this.cards.unshift(element);
+      }
+    });
+  }
+
+  //Appends to the back of the array so its rendered last
+  bringToFront(indexToUpdate: number) {
+    this.cards.forEach((element, index) => {
+      if (element.z === indexToUpdate) {
+        this.cards.splice(index, 1);
+        this.cards.push(element);
+      }
+    });
   }
 
   panFromCard() {

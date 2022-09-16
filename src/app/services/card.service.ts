@@ -11,13 +11,13 @@ export class CardService {
   getCards(): Card[] {
     const cards = [
       {
-        x: 200, y: 100, width: 200, height: 100, color: 'orange', type: 'color', id: '1', image: "url('https://www.tutorialspoint.com/images/seaborn-4.jpg?v=2')"
+        x: 200, y: 100, width: 200, height: 100, color: 'orange', type: 'color', id: '1', image: "url('https://www.tutorialspoint.com/images/seaborn-4.jpg?v=2')", z:1
       },
       {
-        x: 200, y: 250, width: 200, height: 100, color: 'blue', type: 'color', id: '2', image: "url('https://www.tutorialspoint.com/images/seaborn-4.jpg?v=2')"
+        x: 200, y: 250, width: 200, height: 100, color: 'blue', type: 'color', id: '2', image: "url('https://www.tutorialspoint.com/images/seaborn-4.jpg?v=2')", z:2
       },
       {
-        x: 400, y: 400, width: 200, height: 100, color: 'red', type: 'color', id: '3', image: "url('https://www.tutorialspoint.com/images/seaborn-4.jpg?v=2')"
+        x: 400, y: 400, width: 200, height: 100, color: 'red', type: 'color', id: '3', image: "url('https://www.tutorialspoint.com/images/seaborn-4.jpg?v=2')", z:3
       },
       {
         x: 800,
@@ -27,7 +27,8 @@ export class CardService {
         color: '',
         id: '4',
         image: 'https://www.tutorialspoint.com/images/seaborn-4.jpg?v=2',
-        type: 'image'
+        type: 'image',
+        z:4
       }
     ];
 

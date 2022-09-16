@@ -9,4 +9,5 @@ export interface Card {
     id: string;
     cards?: Card[];
     selected?: boolean;
+    z: number;
 }
