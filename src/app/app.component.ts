@@ -23,6 +23,7 @@ const enum Status {
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+
   @ViewChild('contents') contents!: ElementRef;
 
   public panningEnabled = false;
@@ -67,6 +68,7 @@ export class AppComponent implements OnInit {
   public canvasWidth = 2000;
 
   public prevMouse = { x: 0, y: 0 };
+
 
   constructor(private cardService: CardService) { }
 
@@ -118,22 +120,31 @@ export class AppComponent implements OnInit {
   }
 
   public handleMousedown(event: MouseEvent): void {
-    this.prevMouse = { x: event.clientX, y: event.clientY };
-    // this.initialContentsPos.x = this.translate.translateX;
-    // this.initialContentsPos.y = this.translate.translateY;
-    
-    const x = event.clientX * (1 / this.scale);
-    const y = event.clientY * (1 / this.scale);
+    this.prevMouse = { x: event.pageX, y: event.pageY };
+
+    const x = event.clientX * this.scale;
+    const y = event.clientY / this.scale;
+    const xP = event.pageX / this.scale;
+    const yP = event.pageY / this.scale;
 
     this.mouseClick = {
       x: event.clientX, y: event.clientY,
       left: this.selectionBox.x, top: this.selectionBox.y
     };
 
+    this.mouseClickPage = {
+      x: event.pageX, y: event.pageY,
+      left: this.selectionBox.x, top: this.selectionBox.y
+    };
 
+    console.log(this.mouseClickPage.left);
+
+    //TODO: add mousepage
+
+    //TODO remove scrollX & Y and add page
     if (
-      ((x + window.scrollX) > this.selectionBox.x && ((x + window.scrollX) < (this.selectionBox.x + this.selectionBox.width))) &&
-      ((y + window.scrollY) > this.selectionBox.y && ((y + window.scrollY) < (this.selectionBox.y + this.selectionBox.height)))
+      ((xP) > this.selectionBox.x && ((xP) < (this.selectionBox.x + this.selectionBox.width))) &&
+      ((yP) > this.selectionBox.y && ((yP) < (this.selectionBox.y + this.selectionBox.height)))
     ) {
       this.cards.forEach((c) => {
         c.selected = this.selection.some(sc => sc.id === c.id);
@@ -165,29 +176,35 @@ export class AppComponent implements OnInit {
   }
 
   public handleMousemove(event: MouseEvent): void {
-    this.mouse = {
-      x: event.clientX * (1 / this.scale),
-      y: event.clientY * (1 / this.scale)
+    this.mouse = { //should be / by scale
+      x: event.clientX * this.scale,
+      y: event.clientY * this.scale
+    };
+    //TODO: add mosue page on mouse move
+    this.mousePage = {
+      x: event.pageX,
+      y: event.pageY
     };
 
-
+    // if (this.selection.length && this.status === Status.MOVE && this.isCardPanning == false) {
     if (this.selection.length && this.status === Status.MOVE) {
-      this.selectionBox.x = this.mouseClick.left + (this.mouse.x - this.mouseClick.x);
-      this.selectionBox.y = this.mouseClick.top + (this.mouse.y - this.mouseClick.y);
+      //Updating it to be the amount that the card has moved (scaled)
+      this.selectionBox.x = this.mouseClickPage.left + ((this.mousePage.x - this.mouseClickPage.x) / this.scale);
+      this.selectionBox.y = this.mouseClickPage.top + ((this.mousePage.y - this.mouseClickPage.y) / this.scale);
     } else if (this.isPanning) {
 
       // re-assigned while panning to avoid ui flickering due to transalate values 
-      this.mouse = {
-        x: event.clientX,
-        y: event.clientY
+      this.mousePage = {
+        x: event.pageX,
+        y: event.pageY
       };
 
       //calculate the difference its moved
-      const diffXPan = -1 * (this.mouse.x - this.prevMouse.x);
-      const diffYPan = -1 * (this.mouse.y - this.prevMouse.y);
-      this.scrollPage(diffXPan, diffYPan); //scroll page by the difference 
-      this.prevMouse.x = this.mouse.x;
-      this.prevMouse.y = this.mouse.y; //update previous x & y values
+      const diffXPan = -1 * (this.mousePage.x - this.prevMouse.x);
+      const diffYPan = -1 * (this.mousePage.y - this.prevMouse.y);
+      this.scrollPage(diffXPan, diffYPan);
+      // this.prevMouse.x = this.mousePage.x;
+      // this.prevMouse.y = this.mousePage.y; //update previous x & y values
       this.update();
     } else if (!this.panningEnabled && this.isSelecting) {
       this.drawSelectionBox();
@@ -236,7 +253,7 @@ export class AppComponent implements OnInit {
     };
   };
 
-
+  //TODO: combine into one function by entering a negative or positve value
   public handleZoomOut(scaleInterval: number = this.scaleInterval): void {
     if (this.scale - scaleInterval < .05) {
       return;
@@ -248,6 +265,7 @@ export class AppComponent implements OnInit {
     this.update();
   }
 
+  //TODO: combine into one function by entering a negative or positve value
   public handleZoomIn(scaleInterval: number = this.scaleInterval): void {
     if (this.scale + scaleInterval > 4) {
       return;
@@ -285,7 +303,7 @@ export class AppComponent implements OnInit {
       x: event.pageX,
       y: event.pageY
     }
-
+    console.log(image_loc);
     //*zoompoint based on current scale
     const zoom_point = { x: image_loc.x / this.scale, y: image_loc.y / this.scale }
 
@@ -326,11 +344,11 @@ export class AppComponent implements OnInit {
   onKeyDown(event: KeyboardEvent) {
     const minus = 189;
     const plus = 187;
-
+    
     if (event.code === 'Space' && event.target == document.body) {
       this.panningEnabled = true;
       event.preventDefault()
-    }else if ((event.key === '-' || event.which === minus) && (event.ctrlKey || event.metaKey)) {
+    } else if ((event.key === '-' || event.which === minus) && (event.ctrlKey || event.metaKey)) {
       this.handleZoomOut();
       event.preventDefault();
     } else if ((event.key === '+' || event.which === plus) && (event.ctrlKey || event.metaKey)) {
@@ -348,14 +366,14 @@ export class AppComponent implements OnInit {
    * set the height, width, top and left attributes for selection box
    * @returns void
    */
-  private drawSelectionBox(): void {
-    const left = this.mouse.x > this.mouseClick.x ? this.mouseClick.x : this.mouse.x;
-    const top = this.mouse.y > this.mouseClick.y ? this.mouseClick.y : this.mouse.y;
+  private drawSelectionBox(): void { //SCALING MOUSE POINTS, should probably set these earlier?
+    const left = this.mousePage.x > this.mouseClickPage.x ? this.mouseClickPage.x / this.scale : this.mousePage.x / this.scale;
+    const top = this.mousePage.y > this.mouseClickPage.y ? this.mouseClickPage.y / this.scale : this.mousePage.y / this.scale;
     this.selectionBox = {
-      width: Math.abs(this.mouse.x - this.mouseClick.x),
-      height: Math.abs(this.mouse.y - this.mouseClick.y),
-      x: left + window.scrollX,
-      y: top + window.scrollY
+      width: Math.abs((this.mousePage.x - this.mouseClickPage.x) / this.scale),
+      height: Math.abs((this.mousePage.y - this.mouseClickPage.y) / this.scale),
+      x: left,
+      y: top
     };
   }
 
@@ -417,14 +435,40 @@ export class AppComponent implements OnInit {
     window.scrollBy(xamount, yamount);
   }
 
+  public handleMouseScroll(e: WheelEvent) {
+    const image_loc = {
+      x: e.pageX + window.scrollX,
+      y: e.pageY + window.scrollY
+    }
+  }
+  // public scrollPage(xamount: number, yamount: number) {
+  //   window.scrollBy(xamount, yamount);
+  //   // if (this.selection.length && this.status === Status.MOVE && this.cardPanning == false) {
+
+  //   //   this.selectionBox.x = this.mouseClick.left + (this.mouse.x - this.mouseClick.x);
+  //   //   this.selectionBox.y = this.mouseClick.top + (this.mouse.y - this.mouseClick.y);
+  //   // } else 
+  //   // if (this.selection.length && this.status === Status.MOVE && this.cardPanning == true) {
+  //   //   //Pan from the card
+  //   //   // this.selectionBox.x = this.selectionBox.x + (1 * (1 / this.scale));
+  //   //   // this.selectionBox.y = this.selectionBox.y + (this.panSpeedPositive * (1 /this.scale));
+  //   // }
+  // }
+
   scrollXBox(panSpeed: number) {
     this.selectionBox.x = this.selectionBox.x + panSpeed * (1 / this.scale);
+    // this.selectionBox.x = this.selectionBox.x + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
+    // this.selectionBoxChange.emit(this.selectionBox);
     this.mouseClick.left = this.mouseClick.left + panSpeed * (1 / this.scale);
+    // this.boxPosition2.left = this.boxPosition2.left + panSpeed * (1 /this.scale);
   }
 
   scrollYBox(panSpeed: number) {
     this.selectionBox.y = this.selectionBox.y + panSpeed * (1 / this.scale);
+    // this.selectionBox.y = this.selectionBox.y + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
+    // this.selectionBoxChange.emit(this.selectionBox);
     this.mouseClick.top = this.mouseClick.top + panSpeed * (1 / this.scale);
+    // this.boxPosition2.top = this.boxPosition2.top + panSpeed * (1 /this.scale);
   }
 
   public scrollTo(xamount: number, yamount: number) {
