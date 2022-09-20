@@ -120,6 +120,10 @@ export class AppComponent implements OnInit {
   }
 
   public handleMousedown(event: MouseEvent): void {
+
+    if(event.which == 2){
+      return;
+    }
     this.prevMouse = { x: event.pageX, y: event.pageY };
 
     const x = event.clientX * this.scale;
