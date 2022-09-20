@@ -84,29 +84,68 @@ export class AppComponent implements OnInit {
     this.panTrigger = false;
     this.obs = this.src.subscribe(value => {
 
-      if (this.panTrigger == true) {
+      // if (this.panTrigger == true) {
 
-        if (this.mouse.x < this.panRangeL / this.scale && this.mouse.y > this.panRangeL / this.scale && window.scrollX != 0) {
+      //   if (this.mouse.x < this.panRangeL / this.scale && this.mouse.y > this.panRangeL / this.scale && window.scrollX != 0) {
+      //     this.scrollXBox(this.panSpeed);
+      //     this.scrollPage(this.panSpeed, 0);
+      //   } else if (this.mouse.y < this.panRangeL / this.scale && this.mouse.x > this.panRangeL / this.scale && window.scrollY != 0) {
+      //     this.scrollYBox(this.panSpeed);
+      //     this.scrollPage(0, this.panSpeed);
+      //   } else if (this.mouse.x < this.panRangeL / this.scale && this.mouse.y < this.panRangeL / this.scale && window.scrollX != 0 && window.scrollY != 0) {
+      //     this.scrollXBox(this.panSpeed);
+      //     this.scrollYBox(this.panSpeed);
+      //     this.scrollPage(this.panSpeed, this.panSpeed);
+      //   } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y < this.innerHeightScaled - this.panRangeR / this.scale) {
+      //     this.scrollXBox(this.panSpeedPositive);
+      //     this.scrollPage(this.panSpeedPositive, 0);
+      //   } else if (this.mouse.x < this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y > this.innerHeightScaled - this.panRangeR / this.scale) {
+      //     this.scrollYBox(this.panSpeedPositive);
+      //     this.scrollPage(0, this.panSpeedPositive);
+      //   } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y > this.innerHeightScaled - this.panRangeR / this.scale) {
+      //     this.scrollXBox(this.panSpeedPositive);
+      //     this.scrollYBox(this.panSpeedPositive);
+      //     this.scrollPage(this.panSpeedPositive, this.panSpeedPositive);
+      //   }
+      // }
+      if(this.panTrigger == true) {
+
+        if(this.mouse.x < this.panRangeL && this.mouse.y > this.panRangeL && this.mouse.y < this.innerHeightScaled - this.panRangeR && window.scrollX != 0) {
+          // console.log('left')
           this.scrollXBox(this.panSpeed);
           this.scrollPage(this.panSpeed, 0);
-        } else if (this.mouse.y < this.panRangeL / this.scale && this.mouse.x > this.panRangeL / this.scale && window.scrollY != 0) {
+        } else if(this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x < this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
+          // console.log(' up')
           this.scrollYBox(this.panSpeed);
           this.scrollPage(0, this.panSpeed);
-        } else if (this.mouse.x < this.panRangeL / this.scale && this.mouse.y < this.panRangeL / this.scale && window.scrollX != 0 && window.scrollY != 0) {
+        } else if(this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x > this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
+          // console.log('up right')
+          this.scrollXBox(this.panSpeedPositive);
+          this.scrollYBox(this.panSpeed);
+          this.scrollPage(this.panSpeedPositive, this.panSpeed);
+        } else if(this.mouse.x < this.panRangeL && this.mouse.y < this.panRangeL && window.scrollX != 0 && window.scrollY != 0) {
+          // console.log('up left')
           this.scrollXBox(this.panSpeed);
           this.scrollYBox(this.panSpeed);
           this.scrollPage(this.panSpeed, this.panSpeed);
-        } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y < this.innerHeightScaled - this.panRangeR / this.scale) {
+        } else if(this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y < this.innerHeightScaled - this.panRangeR && this.mouse.y > this.panRangeL) {
+          // console.log('right');
           this.scrollXBox(this.panSpeedPositive);
           this.scrollPage(this.panSpeedPositive, 0);
-        } else if (this.mouse.x < this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y > this.innerHeightScaled - this.panRangeR / this.scale) {
+        } else if(this.mouse.x < this.innerWidthScaled - this.panRangeR && this.mouse.x > this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
+          // console.log('down');
           this.scrollYBox(this.panSpeedPositive);
           this.scrollPage(0, this.panSpeedPositive);
-        } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y > this.innerHeightScaled - this.panRangeR / this.scale) {
+        } else if(this.mouse.x < this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR && window.scrollX > 0) {
+          this.scrollYBox(this.panSpeedPositive);
+          this.scrollXBox(this.panSpeed);
+          this.scrollPage(this.panSpeed, this.panSpeedPositive);
+        } else if(this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
+          // console.log('down right')
           this.scrollXBox(this.panSpeedPositive);
           this.scrollYBox(this.panSpeedPositive);
           this.scrollPage(this.panSpeedPositive, this.panSpeedPositive);
-        }
+        } 
       }
     });
   }
@@ -120,10 +159,8 @@ export class AppComponent implements OnInit {
   }
 
   public handleMousedown(event: MouseEvent): void {
-
-    if(event.which == 2){
-      return;
-    }
+    this.innerWidthScaled = window.innerWidth * (1 / this.scale);
+    this.innerHeightScaled = window.innerHeight * (1 / this.scale);
     this.prevMouse = { x: event.pageX, y: event.pageY };
 
     const x = event.clientX * this.scale;
@@ -140,8 +177,6 @@ export class AppComponent implements OnInit {
       x: event.pageX, y: event.pageY,
       left: this.selectionBox.x, top: this.selectionBox.y
     };
-
-    console.log(this.mouseClickPage.left);
 
     //TODO: add mousepage
 
@@ -181,14 +216,17 @@ export class AppComponent implements OnInit {
 
   public handleMousemove(event: MouseEvent): void {
     this.mouse = { //should be / by scale
-      x: event.clientX * this.scale,
-      y: event.clientY * this.scale
+      x: event.clientX / this.scale,
+      y: event.clientY / this.scale
     };
     //TODO: add mosue page on mouse move
     this.mousePage = {
       x: event.pageX,
       y: event.pageY
     };
+
+    this.panRangeL = 40 / this.scale;
+    this.panRangeR = 40 / this.scale;
 
     // if (this.selection.length && this.status === Status.MOVE && this.isCardPanning == false) {
     if (this.selection.length && this.status === Status.MOVE) {
@@ -307,7 +345,7 @@ export class AppComponent implements OnInit {
       x: event.pageX,
       y: event.pageY
     }
-    console.log(image_loc);
+
     //*zoompoint based on current scale
     const zoom_point = { x: image_loc.x / this.scale, y: image_loc.y / this.scale }
 
@@ -460,6 +498,7 @@ export class AppComponent implements OnInit {
   // }
 
   scrollXBox(panSpeed: number) {
+    console.log('page');
     this.selectionBox.x = this.selectionBox.x + panSpeed * (1 / this.scale);
     // this.selectionBox.x = this.selectionBox.x + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
     // this.selectionBoxChange.emit(this.selectionBox);

@@ -68,8 +68,10 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
   src = interval(10);
   obs!: Subscription;
   panTrigger!: boolean;
-  public innerHeightScaled = 0;
-  public innerWidthScaled = 0;
+  // public innerHeightScaled = 0;
+  // public innerWidthScaled = 0;
+  @Input() public innerHeightScaled!: number;
+  @Input() public innerWidthScaled!: number;
   public scrollTrigger = false;
 
   ngOnInit() { 
@@ -81,23 +83,38 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
     
       if(this.panTrigger == true) {
 
-        if(this.mouse.x < this.panRangeL / this.scale && this.mouse.y > this.panRangeL / this.scale && window.scrollX != 0) {
+        if(this.mouse.x < this.panRangeL && this.mouse.y > this.panRangeL && this.mouse.y < this.innerHeightScaled - this.panRangeR && window.scrollX != 0) {
+          // console.log('left')
           this.scrollX(this.panSpeed);
           this.scrollCanvas(this.panSpeed, 0);
-        } else if(this.mouse.y < this.panRangeL / this.scale && this.mouse.x > this.panRangeL / this.scale && window.scrollY != 0) {
+        } else if(this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x < this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
+          // console.log(' up')
           this.scrollY(this.panSpeed);
           this.scrollCanvas(0, this.panSpeed);
-        } else if(this.mouse.x < this.panRangeL / this.scale && this.mouse.y < this.panRangeL / this.scale && window.scrollX != 0 && window.scrollY != 0) {
+        } else if(this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x > this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
+          // console.log('up right')
+          this.scrollX(this.panSpeedPositive);
+          this.scrollY(this.panSpeed);
+          this.scrollCanvas(this.panSpeedPositive, this.panSpeed);
+        } else if(this.mouse.x < this.panRangeL && this.mouse.y < this.panRangeL && window.scrollX != 0 && window.scrollY != 0) {
+          // console.log('up left')
           this.scrollX(this.panSpeed);
           this.scrollY(this.panSpeed);
           this.scrollCanvas(this.panSpeed, this.panSpeed);
-        } else if(this.mouse.x > this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y < this.innerHeightScaled - this.panRangeR / this.scale) {
+        } else if(this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y < this.innerHeightScaled - this.panRangeR && this.mouse.y > this.panRangeL) {
+          // console.log('right');
           this.scrollX(this.panSpeedPositive);
           this.scrollCanvas(this.panSpeedPositive, 0);
-        } else if(this.mouse.x < this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y > this.innerHeightScaled - this.panRangeR / this.scale) {
+        } else if(this.mouse.x < this.innerWidthScaled - this.panRangeR && this.mouse.x > this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
+          // console.log('down');
           this.scrollY(this.panSpeedPositive);
           this.scrollCanvas(0, this.panSpeedPositive);
-        } else if(this.mouse.x > this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y > this.innerHeightScaled - this.panRangeR / this.scale) {
+        } else if(this.mouse.x < this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR && window.scrollX > 0) {
+          this.scrollY(this.panSpeedPositive);
+          this.scrollX(this.panSpeed);
+          this.scrollCanvas(this.panSpeed, this.panSpeedPositive);
+        } else if(this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
+          // console.log('down right')
           this.scrollX(this.panSpeedPositive);
           this.scrollY(this.panSpeedPositive);
           this.scrollCanvas(this.panSpeedPositive, this.panSpeedPositive);
@@ -149,6 +166,8 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
       this.mouseClick = { x: event.clientX * (1 / this.scale), y: event.clientY * (1 / this.scale), left: this.card.x, top: this.card.y };
       this.innerWidthScaled = window.innerWidth * (1 / this.scale);
       this.innerHeightScaled = window.innerHeight * (1 / this.scale);
+      this.panRangeL = 40 / this.scale;
+      this.panRangeR = 40 / this.scale;
       this.clearSelection.emit();
       event.stopPropagation();
     } else {
@@ -346,6 +365,7 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
   }
 
   scrollX(panSpeed: number) {
+    console.log('card');
     this.card.x = this.card.x + panSpeed * (1 /this.scale);
     // this.selectionBox.x = this.selectionBox.x + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
     // this.selectionBoxChange.emit(this.selectionBox);
