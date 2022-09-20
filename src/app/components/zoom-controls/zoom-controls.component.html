@@ -2,14 +2,13 @@
     <div class="d-flex" (click)="zoomOut.emit()">-</div>
     <div class="zoom-selection" (click)="handleLevelDisplay()">
         {{ zoomLevel * 100 | number: '1.0-0' }} %
-    </div>
+   </div>
     <div class="d-flex" (click)="zoomIn.emit()">+</div>
 </div>
 
 <div *ngIf="showLevels" class="zoom-levels">
     <div class="zoom-input">
-        <input type="text" autofocus [ngModel]="zoomLevel * 100 | number: '1.0-0'"
-            (keydown.enter)="handleZoomInput($event)" />
+        <input type="text" autofocus [ngModel]="zoomLevel * 100 | number: '1.0-0'" (keydown.enter)="handleZoomInput($event)"  />
     </div>
     <div class="zoom-level" [class.selected]="zoomLevel === l" (click)="handleZoomTo(l)" *ngFor="let l of levels">
         {{ l*100 }}%
