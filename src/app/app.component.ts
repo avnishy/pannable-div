@@ -3,11 +3,14 @@ import {
   ElementRef,
   HostListener,
   OnInit,
-  ViewChild
+  ViewChild,
+  OnDestroy
 } from '@angular/core';
 import { Card } from './models/card';
+import { Boundary } from './models/boundary';
 import { Point } from './models/point';
 import { CardService } from './services/card.service';
+import { interval, Observable, of, Subscription } from 'rxjs';
 
 const enum Status {
   OFF = 0,
@@ -27,6 +30,18 @@ export class AppComponent implements OnInit {
   private isSelecting = false;
   public scale = 1;
   private scaleInterval = 0.1; // 10 % of scale value
+  public isCardPanning = false; // is window being panned from a card
+
+  public panSpeed = -2; //how fast it pans
+  public panSpeedPositive = 2; //how fast it pans
+  public panRangeL = 20 //how close to edge to start panning (lower closer) lEFT TOP
+  public panRangeR = 40 //how close to edge to start panning (lower closer) RIGHT BOTTOM
+  src = interval(10);
+  obs!: Subscription;
+  panTrigger!: boolean;
+  public innerHeightScaled = 0;
+  public innerWidthScaled = 0;
+
 
   // public translate = { scale: this.scale, translateX: 0, translateY: 0 };
   // private initialContentsPos = { x: 0, y: 0 };
@@ -34,12 +49,15 @@ export class AppComponent implements OnInit {
   // private pinnedMousePosition = { x: 0, y: 0 };
   // mousePosition = { x: 0, y: 0 };
 
-  private mouseClick!: { x: number, y: number, left: number, top: number };
-  private mouse!: { x: number, y: number };
+  private mouseClick!: { x: number, y: number, left: number, top: number }; //mouseClick position in viewport
+  private mouse!: { x: number, y: number }; //mouse position of viewport
+  private mousePage!: { x: number, y: number }; //mouse position relevant to whole document (including scroll)
+  private mouseClickPage!: { x: number, y: number, left: number, top: number }; //mouseClick relevant to whole document (including scroll)
   private status: Status = Status.OFF;
 
   public selection: Card[] = [];
   public selectionBox: { width: number, height: number, x: number, y: number } = { width: 0, height: 0, x: 0, y: 0 }
+  public selectionBoxEnabled = false;
 
   public cards: Card[] = this.cardService.getCards();
 
@@ -52,7 +70,48 @@ export class AppComponent implements OnInit {
 
   constructor(private cardService: CardService) { }
 
-  ngOnInit() { }
+  //TODO update to getboundaryclientwidth / height for top bottom
+  boundary: Boundary = { top: 0, bottom: 10000, left: 0, right: 10000 }
+
+  pannedAmountXY = { pannedX: 0, pannedY: 0 }
+
+  ngOnInit() {
+    this.innerWidthScaled = window.innerWidth / this.scale;
+    this.innerHeightScaled = window.innerHeight / this.scale;
+    // set to pan then depending on where mouse is subscribe to the observable and track how long its held down for (calling the function)
+    this.panTrigger = false;
+    this.obs = this.src.subscribe(value => {
+
+      if (this.panTrigger == true) {
+
+        if (this.mouse.x < this.panRangeL / this.scale && this.mouse.y > this.panRangeL / this.scale && window.scrollX != 0) {
+          this.scrollXBox(this.panSpeed);
+          this.scrollPage(this.panSpeed, 0);
+        } else if (this.mouse.y < this.panRangeL / this.scale && this.mouse.x > this.panRangeL / this.scale && window.scrollY != 0) {
+          this.scrollYBox(this.panSpeed);
+          this.scrollPage(0, this.panSpeed);
+        } else if (this.mouse.x < this.panRangeL / this.scale && this.mouse.y < this.panRangeL / this.scale && window.scrollX != 0 && window.scrollY != 0) {
+          this.scrollXBox(this.panSpeed);
+          this.scrollYBox(this.panSpeed);
+          this.scrollPage(this.panSpeed, this.panSpeed);
+        } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y < this.innerHeightScaled - this.panRangeR / this.scale) {
+          this.scrollXBox(this.panSpeedPositive);
+          this.scrollPage(this.panSpeedPositive, 0);
+        } else if (this.mouse.x < this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y > this.innerHeightScaled - this.panRangeR / this.scale) {
+          this.scrollYBox(this.panSpeedPositive);
+          this.scrollPage(0, this.panSpeedPositive);
+        } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y > this.innerHeightScaled - this.panRangeR / this.scale) {
+          this.scrollXBox(this.panSpeedPositive);
+          this.scrollYBox(this.panSpeedPositive);
+          this.scrollPage(this.panSpeedPositive, this.panSpeedPositive);
+        }
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.obs.unsubscribe();
+  }
 
   public togglePanMode(): void {
     this.panningEnabled = !this.panningEnabled;
@@ -67,10 +126,8 @@ export class AppComponent implements OnInit {
     const y = event.clientY * (1 / this.scale);
 
     this.mouseClick = {
-      x: x,
-      y: y,
-      left: this.selectionBox.x,
-      top: this.selectionBox.y
+      x: event.clientX, y: event.clientY,
+      left: this.selectionBox.x, top: this.selectionBox.y
     };
 
 
@@ -82,14 +139,19 @@ export class AppComponent implements OnInit {
         c.selected = this.selection.some(sc => sc.id === c.id);
       });
       this.status = Status.MOVE;
+      this.panTrigger = true;
+      this.selectionBoxEnabled = true;
     } else if (this.panningEnabled) {
-      this.mouseClick.x = event.clientX;
-      this.mouseClick.y = event.clientY;
+      // this.mouseClick.x = event.clientX; TODO remove not needed
+      // this.mouseClick.y = event.clientY; TODO remove not needed
       this.isPanning = true;
       this.status = Status.OFF;
+      this.selectionBoxEnabled = false //! May not be needed
     } else {
       this.isSelecting = true;
       this.status = Status.OFF;
+      this.selectionBoxEnabled = false //! May not be needed
+      this.panTrigger = false;
     }
 
     if (this.status !== Status.MOVE) {
@@ -136,6 +198,7 @@ export class AppComponent implements OnInit {
     this.status = Status.OFF;
     this.isPanning = false;
     this.isSelecting = false;
+    this.panTrigger = false; //set pan to false;
 
     // to prevent cards selection while dragging
     if (this.selection.length) {
@@ -182,6 +245,7 @@ export class AppComponent implements OnInit {
     this.scale -= scaleInterval;
     this.canvasHeight = this.originalCanvasHeight * this.scale; //make smaller
     this.canvasWidth = this.originalCanvasWidth * this.scale;
+    this.update();
   }
 
   public handleZoomIn(scaleInterval: number = this.scaleInterval): void {
@@ -197,21 +261,34 @@ export class AppComponent implements OnInit {
 
   public handleZoomTo(scale: number): void {
     this.scale = scale;
-    this.canvasHeight = this.originalCanvasHeight * this.scale; 
+    this.canvasHeight = this.originalCanvasHeight * this.scale;
     this.canvasWidth = this.originalCanvasWidth * this.scale;
     this.update();
-    
+
   }
 
   @HostListener("wheel", ["$event"])
   public onScroll(event: WheelEvent) {
     // ctrlKey modifier is added when pinch gesture is performed on trackpad
     // need to validate if this works on mac
+    //* TODO: Zoom around point can be optimized
     const ctrlKeyPressed = event.ctrlKey || event.metaKey;
 
     if (!ctrlKeyPressed) {
       return;
     }
+
+    const offset = { x: window.scrollX, y: window.scrollY };
+
+    //*x position of mouse
+    const image_loc = {
+      x: event.pageX,
+      y: event.pageY
+    }
+
+    //*zoompoint based on current scale
+    const zoom_point = { x: image_loc.x / this.scale, y: image_loc.y / this.scale }
+
 
     const scale = 0.05;
     if (event.deltaY > 0) {
@@ -220,6 +297,20 @@ export class AppComponent implements OnInit {
       this.handleZoomIn(scale);
     }
 
+    // //*Find new zoom point scalled
+    const zoom_point_new = {
+      x: zoom_point.x * this.scale,
+      y: zoom_point.y * this.scale,
+    }
+
+    //*Calculate where the new pointer should be based on the scaled zoom point and the original position
+    const newScroll = {
+      x: zoom_point_new.x - image_loc.x,
+      y: zoom_point_new.y - image_loc.y
+    }
+
+    //* Scroll window by that amount
+    window.scrollBy(newScroll.x, newScroll.y);
     event.preventDefault();
   }
 
@@ -324,6 +415,20 @@ export class AppComponent implements OnInit {
 
   public scrollPage(xamount: number, yamount: number) {
     window.scrollBy(xamount, yamount);
+  }
+
+  scrollXBox(panSpeed: number) {
+    this.selectionBox.x = this.selectionBox.x + panSpeed * (1 / this.scale);
+    this.mouseClick.left = this.mouseClick.left + panSpeed * (1 / this.scale);
+  }
+
+  scrollYBox(panSpeed: number) {
+    this.selectionBox.y = this.selectionBox.y + panSpeed * (1 / this.scale);
+    this.mouseClick.top = this.mouseClick.top + panSpeed * (1 / this.scale);
+  }
+
+  public scrollTo(xamount: number, yamount: number) {
+    window.scrollTo(xamount, yamount);
   }
 
 }

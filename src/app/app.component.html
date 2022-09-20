@@ -8,7 +8,7 @@
     <button id="" class="mb-10" (click)="sendToBack(2)">Send to Back Blue</button>
     <button id="" class="mb-10" (click)="sendToBack(3)">Send to Back Red</button>
     <button id="" class="mb-10" (click)="sendToBack(4)">Send to Back Image</button>
-    <button id="" class="mb-10" (click)="sendToBack(4)">Send to Back Image</button> 
+    <button id="" class="mb-10" (click)="sendToBack(4)">Send to Back Image</button>
 </div>
 
 <app-zoom-controls 
@@ -18,8 +18,8 @@
     (zoomTo)="handleZoomTo($event)">
 </app-zoom-controls>
 
-<div class="grid" [class.pannable]="panningEnabled" (mousedown)="handleMousedown($event)" (window:mousemove)="handleMousemove($event)"
-    (mouseup)="handleMouseup($event)" [style.width.vw]="canvasWidth" [style.height.vh]="canvasHeight">
+<div class="grid" #grid [class.pannable]="panningEnabled" (mousedown)="handleMousedown($event)" (window:mousemove)="handleMousemove($event)"
+    (document:mouseup)="handleMouseup($event)" [style.width.vw]="canvasWidth" [style.height.vh]="canvasHeight">
 
     <div class="contents" #contents>
         <app-resizable-draggable *ngFor="let card of cards"            
@@ -28,7 +28,13 @@
             [selected]="card.selected"
             (clearSelection)="clearSelection()"
             (scrollDistance)="scrollPage($event.scrollX, $event.scrollY)"
-            (updatePan)="panFromCard()">
+            (updatePan)="panFromCard()"
+            [isSelectionBox]="selectionBoxEnabled"
+            [numberOfCardsSelected]="selection.length"
+            [(selectionBox)]="selectionBox"
+            [panSpeed]="panSpeed"
+            [panSpeedPositive]="panSpeedPositive"
+            [(cardPanning)]="isCardPanning">
             <!-- TODO -->
             <!-- track by -->
             
