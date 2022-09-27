@@ -130,6 +130,31 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
     }
   }
 
+  scrollCanvas(x: number, y:number) {
+    if(this.scrollTrigger == true) {
+      this.scrollDistance.emit({scrollX: x, scrollY: y});
+    }
+  }
+
+  scrollX(panSpeed: number) {
+    console.log('card');
+    this.card.x = this.card.x + panSpeed * (1 /this.scale);
+    // this.selectionBox.x = this.selectionBox.x + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
+    // this.selectionBoxChange.emit(this.selectionBox);
+      this.mouseClick.left = this.mouseClick.left + panSpeed * (1 /this.scale);
+      this.boxPosition2.left = this.boxPosition2.left + panSpeed * (1 /this.scale);
+  }
+
+    //Pans the canvas on the y axis while updating cards position and mouseclick for movement/resizing //negative number for up positive for down
+  scrollY(panSpeed: number) {
+    //console.log('card');
+    this.card.y = this.card.y + panSpeed * (1 /this.scale);
+    // this.selectionBox.y = this.selectionBox.y + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
+    // this.selectionBoxChange.emit(this.selectionBox);
+      this.mouseClick.top = this.mouseClick.top + panSpeed * (1 /this.scale);
+      this.boxPosition2.top = this.boxPosition2.top + panSpeed * (1 /this.scale);
+  }
+
   ngAfterViewInit() {
     this.loadBox();
     this.loadContainer();
@@ -357,30 +382,5 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
     this.updatePan.emit();
   }
 
-  //TODO: update ifstatements above so this isnt called to improve performance
-  scrollCanvas(x: number, y:number) {
-    if(this.scrollTrigger == true) {
-      this.scrollDistance.emit({scrollX: x, scrollY: y});
-    }
-  }
-
-  scrollX(panSpeed: number) {
-    console.log('card');
-    this.card.x = this.card.x + panSpeed * (1 /this.scale);
-    // this.selectionBox.x = this.selectionBox.x + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
-    // this.selectionBoxChange.emit(this.selectionBox);
-      this.mouseClick.left = this.mouseClick.left + panSpeed * (1 /this.scale);
-      this.boxPosition2.left = this.boxPosition2.left + panSpeed * (1 /this.scale);
-  }
-
-    //Pans the canvas on the y axis while updating cards position and mouseclick for movement/resizing //negative number for up positive for down
-  scrollY(panSpeed: number) {
-    this.card.y = this.card.y + panSpeed * (1 /this.scale);
-    // this.selectionBox.y = this.selectionBox.y + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
-    // this.selectionBoxChange.emit(this.selectionBox);
-      this.mouseClick.top = this.mouseClick.top + panSpeed * (1 /this.scale);
-      this.boxPosition2.top = this.boxPosition2.top + panSpeed * (1 /this.scale);
-  }
-
-  
+  //TODO: update ifstatements above so this isnt called to improve performance  
 }
