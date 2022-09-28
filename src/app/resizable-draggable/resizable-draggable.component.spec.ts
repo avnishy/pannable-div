@@ -8,9 +8,9 @@ describe('ResizableDraggableComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ResizableDraggableComponent]
+      declarations: [ ResizableDraggableComponent ]
     })
-      .compileComponents();
+    .compileComponents();
 
     fixture = TestBed.createComponent(ResizableDraggableComponent);
     component = fixture.componentInstance;

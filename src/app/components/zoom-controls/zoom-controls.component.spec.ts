@@ -8,9 +8,9 @@ describe('ZoomControlsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ZoomControlsComponent]
+      declarations: [ ZoomControlsComponent ]
     })
-      .compileComponents();
+    .compileComponents();
 
     fixture = TestBed.createComponent(ZoomControlsComponent);
     component = fixture.componentInstance;
