@@ -1,6 +1,8 @@
 export interface Card {
     x: number;
+    ox: number;
     y: number;
+    oy: number;
     width: number;
     height: number;
     color: string;
@@ -9,4 +11,5 @@ export interface Card {
     id: string;
     cards?: Card[];
     selected?: boolean;
+    z: number;
 }

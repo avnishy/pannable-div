@@ -30,7 +30,7 @@
     // height: 0;
     // display: block;
     // height: 100%;
-    // transform-origin: 0 0;
+    transform-origin: 0 0;
 }
 
 .pannable {
@@ -73,4 +73,12 @@
     -khtml-user-drag: none;
     -moz-user-drag: none;
     -o-user-drag: none;
+}
+
+//sets canvas size
+.boundary {
+    position: absolute;
+    height: 1500px;
+    width: 1500px;
+    outline: 10px solid black;
 }

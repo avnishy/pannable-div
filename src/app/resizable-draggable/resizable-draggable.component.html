@@ -2,12 +2,12 @@
     [style.width.px]="card.width" 
     [style.height.px]="card.height"
     [style.transform]="'translate3d('+ card.x + 'px,' + card.y + 'px,' + '0px)'"
-    [class.active]="status === 1 || status === 2 || status === 31 || status === 32 || status === 33 || status === 34"
+    [class.active]="status === 1 || status === 2 || status === 31 || status === 32 || status === 33 || status === 34  "
     (mousedown)="setStatus($event, 2)"
-    (window:mouseup)="setStatus($event, 0)"
+    (document:mouseup)="setStatus($event, 0)"
     (window:mousedown)="setMouseClick($event)"
 >
-
+    <!-- TODO: addmouseout above -->
     <!-- <div class="resize-action" (mousedown)="setStatus($event, 1)"></div>
     <div class="resize-action-top-left" (mousedown)="setStatus($event, 3)"></div>
     <div class="resize-action-top-right" (mousedown)="setStatus($event, 4)"></div>
@@ -18,7 +18,7 @@
     <div class="resize-action-left" (mousedown)="setStatus($event, 34)"></div>
     <span>{{card.width | number:'1.0-0'}}px</span>
     <span>{{card.height | number:'1.0-0'}}px</span>
-    <!-- <span>({{card.x}}, {{card.y}})</span> -->
+    <span>({{card.x}}, {{card.y}})</span>
 
     <ng-content></ng-content>
 </div>
