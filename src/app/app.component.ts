@@ -40,7 +40,6 @@ export class AppComponent implements OnInit {
   src = interval(10);
   obs!: Subscription;
   panTrigger!: boolean;
-  outsideOfViewPort = false;
   public innerHeightScaled = 0;
   public innerWidthScaled = 0;
 
@@ -85,44 +84,68 @@ export class AppComponent implements OnInit {
     this.panTrigger = false;
     this.obs = this.src.subscribe(value => {
 
-      if (this.panTrigger == true) {
+      // if (this.panTrigger == true) {
 
-        if (this.mouse.x < this.panRangeL && this.mouse.y > this.panRangeL && this.mouse.y < this.innerHeightScaled - this.panRangeR && window.scrollX != 0) {
+      //   if (this.mouse.x < this.panRangeL / this.scale && this.mouse.y > this.panRangeL / this.scale && window.scrollX != 0) {
+      //     this.scrollXBox(this.panSpeed);
+      //     this.scrollPage(this.panSpeed, 0);
+      //   } else if (this.mouse.y < this.panRangeL / this.scale && this.mouse.x > this.panRangeL / this.scale && window.scrollY != 0) {
+      //     this.scrollYBox(this.panSpeed);
+      //     this.scrollPage(0, this.panSpeed);
+      //   } else if (this.mouse.x < this.panRangeL / this.scale && this.mouse.y < this.panRangeL / this.scale && window.scrollX != 0 && window.scrollY != 0) {
+      //     this.scrollXBox(this.panSpeed);
+      //     this.scrollYBox(this.panSpeed);
+      //     this.scrollPage(this.panSpeed, this.panSpeed);
+      //   } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y < this.innerHeightScaled - this.panRangeR / this.scale) {
+      //     this.scrollXBox(this.panSpeedPositive);
+      //     this.scrollPage(this.panSpeedPositive, 0);
+      //   } else if (this.mouse.x < this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y > this.innerHeightScaled - this.panRangeR / this.scale) {
+      //     this.scrollYBox(this.panSpeedPositive);
+      //     this.scrollPage(0, this.panSpeedPositive);
+      //   } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y > this.innerHeightScaled - this.panRangeR / this.scale) {
+      //     this.scrollXBox(this.panSpeedPositive);
+      //     this.scrollYBox(this.panSpeedPositive);
+      //     this.scrollPage(this.panSpeedPositive, this.panSpeedPositive);
+      //   }
+      // }
+      if(this.panTrigger == true) {
+
+        if(this.mouse.x < this.panRangeL && this.mouse.y > this.panRangeL && this.mouse.y < this.innerHeightScaled - this.panRangeR && window.scrollX != 0) {
           // console.log('left')
           this.scrollXBox(this.panSpeed);
           this.scrollPage(this.panSpeed, 0);
-        } else if (this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x < this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
+        } else if(this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x < this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
           // console.log(' up')
           this.scrollYBox(this.panSpeed);
           this.scrollPage(0, this.panSpeed);
-        } else if (this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x > this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
+        } else if(this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x > this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
           // console.log('up right')
           this.scrollXBox(this.panSpeedPositive);
           this.scrollYBox(this.panSpeed);
           this.scrollPage(this.panSpeedPositive, this.panSpeed);
-        } else if (this.mouse.x < this.panRangeL && this.mouse.y < this.panRangeL && window.scrollX != 0 && window.scrollY != 0) {
+        } else if(this.mouse.x < this.panRangeL && this.mouse.y < this.panRangeL && window.scrollX != 0 && window.scrollY != 0) {
           // console.log('up left')
           this.scrollXBox(this.panSpeed);
           this.scrollYBox(this.panSpeed);
           this.scrollPage(this.panSpeed, this.panSpeed);
-        } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y < this.innerHeightScaled - this.panRangeR && this.mouse.y > this.panRangeL) {
+        } else if(this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y < this.innerHeightScaled - this.panRangeR && this.mouse.y > this.panRangeL) {
           // console.log('right');
           this.scrollXBox(this.panSpeedPositive);
           this.scrollPage(this.panSpeedPositive, 0);
-        } else if (this.mouse.x < this.innerWidthScaled - this.panRangeR && this.mouse.x > this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
+        } else if(this.mouse.x < this.innerWidthScaled - this.panRangeR && this.mouse.x > this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
           // console.log('down');
           this.scrollYBox(this.panSpeedPositive);
           this.scrollPage(0, this.panSpeedPositive);
-        } else if (this.mouse.x < this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR && window.scrollX > 0) {
+        } else if(this.mouse.x < this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR && window.scrollX > 0) {
           this.scrollYBox(this.panSpeedPositive);
           this.scrollXBox(this.panSpeed);
           this.scrollPage(this.panSpeed, this.panSpeedPositive);
-        } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
+        } else if(this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
           // console.log('down right')
           this.scrollXBox(this.panSpeedPositive);
           this.scrollYBox(this.panSpeedPositive);
           this.scrollPage(this.panSpeedPositive, this.panSpeedPositive);
-        }
+        } 
       }
     });
   }
@@ -304,19 +327,6 @@ export class AppComponent implements OnInit {
 
   }
 
-
-  @HostListener('body:mouseleave', ['$event'])
-  ommouseout(event: any) {
-    if (this.panTrigger == true) {
-      this.outsideOfViewPort = true;
-    }
-  }
-
-  @HostListener('body:mouseenter', ['$event'])
-  ommouseenter(event: any) {
-    this.outsideOfViewPort = false;
-  }
-
   @HostListener("wheel", ["$event"])
   public onScroll(event: WheelEvent) {
     // ctrlKey modifier is added when pinch gesture is performed on trackpad
@@ -376,7 +386,7 @@ export class AppComponent implements OnInit {
   onKeyDown(event: KeyboardEvent) {
     const minus = 189;
     const plus = 187;
-
+    
     if (event.code === 'Space' && event.target == document.body) {
       this.panningEnabled = true;
       event.preventDefault()
