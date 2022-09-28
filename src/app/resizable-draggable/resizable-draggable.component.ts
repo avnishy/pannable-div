@@ -21,7 +21,13 @@ const enum Status {
   styleUrls: ['./resizable-draggable.component.scss']
 })
 export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnChanges {
-
+  // @Input() public width!: number;
+  // @Input() public height!: number;
+  // @Input() public left!: number;
+  // @Input() public top!: number;
+  // @Input() public type!: string;
+  // @Input() public image!: string;
+  // @Input() public color!: string;
 
   @Input() public scale: number = 1;
   @Input() public card!: Card;
@@ -40,6 +46,7 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
   @Output() public scrollDistance = new EventEmitter<{ scrollX: number, scrollY: number }>;
 
   @Output() public clearSelection = new EventEmitter<void>();
+  @Output() public selectCard = new EventEmitter<Card>();
 
   @ViewChild("box") public box!: ElementRef;
 
@@ -61,7 +68,9 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
 
   src = interval(10);
   obs!: Subscription;
-  panTrigger!: boolean;;
+  panTrigger!: boolean;
+  // public innerHeightScaled = 0;
+  // public innerWidthScaled = 0;
   @Input() public innerHeightScaled!: number;
   @Input() public innerWidthScaled!: number;
   public scrollTrigger = false;
@@ -72,6 +81,46 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
     // set to pan then depending on where mouse is subscribe to the observable and track how long its held down for (calling the function)
     this.panTrigger = false;
     this.obs = this.src.subscribe(value => {
+
+      if (false) {
+
+        if (this.mouse.x < this.panRangeL && this.mouse.y > this.panRangeL && this.mouse.y < this.innerHeightScaled - this.panRangeR && window.scrollX != 0) {
+          // console.log('left')
+          this.scrollX(this.panSpeed);
+          this.scrollCanvas(this.panSpeed, 0);
+        } else if (this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x < this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
+          // console.log(' up')
+          this.scrollY(this.panSpeed);
+          this.scrollCanvas(0, this.panSpeed);
+        } else if (this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x > this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
+          // console.log('up right')
+          this.scrollX(this.panSpeedPositive);
+          this.scrollY(this.panSpeed);
+          this.scrollCanvas(this.panSpeedPositive, this.panSpeed);
+        } else if (this.mouse.x < this.panRangeL && this.mouse.y < this.panRangeL && window.scrollX != 0 && window.scrollY != 0) {
+          // console.log('up left')
+          this.scrollX(this.panSpeed);
+          this.scrollY(this.panSpeed);
+          this.scrollCanvas(this.panSpeed, this.panSpeed);
+        } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y < this.innerHeightScaled - this.panRangeR && this.mouse.y > this.panRangeL) {
+          // console.log('right');
+          this.scrollX(this.panSpeedPositive);
+          this.scrollCanvas(this.panSpeedPositive, 0);
+        } else if (this.mouse.x < this.innerWidthScaled - this.panRangeR && this.mouse.x > this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
+          // console.log('down');
+          this.scrollY(this.panSpeedPositive);
+          this.scrollCanvas(0, this.panSpeedPositive);
+        } else if (this.mouse.x < this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR && window.scrollX > 0) {
+          this.scrollY(this.panSpeedPositive);
+          this.scrollX(this.panSpeed);
+          this.scrollCanvas(this.panSpeed, this.panSpeedPositive);
+        } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
+          // console.log('down right')
+          this.scrollX(this.panSpeedPositive);
+          this.scrollY(this.panSpeedPositive);
+          this.scrollCanvas(this.panSpeedPositive, this.panSpeedPositive);
+        }
+      }
     });
   }
 
@@ -121,7 +170,9 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
       this.panRangeL = 40 / this.scale;
       this.panRangeR = 40 / this.scale;
       this.clearSelection.emit();
-      event.stopPropagation();
+
+      this.selectCard.emit(this.card);
+      // event.stopPropagation();
     } else {
       this.loadBox();
       this.card.selected = false;
@@ -150,12 +201,16 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
     this.mouse = { x: event.clientX * (1 / this.scale), y: event.clientY * (1 / this.scale) };
     this.boxPosition2 = this.box.nativeElement.getBoundingClientRect();
     this.boxPosition2 = { left: this.boxPosition2.left / this.scale, top: this.boxPosition2.top * (1 / this.scale), right: this.boxPosition2.right * (1 / this.scale), bottom: this.boxPosition2.bottom * (1 / this.scale), width: this.boxPosition2.width * (1 / this.scale), height: this.boxPosition2.height * (1 / this.scale) }
+    // if (this.status === Status.RESIZE) this.resize(); //TODO Rename 
+    // else if (this.status === Status.RESIZETOPLEFT) this.resizeTL();
+    // else if (this.status === Status.RESIZETOPRIGHT) this.resizeTR();
+    // else if (this.status === Status.RESIZEBOTTOMLEFT) this.resizeBL();
     if (this.status === Status.RESIZETOP) this.resizeTop();
     else if (this.status === Status.RESIZERIGHT) this.resizeRight();
     else if (this.status === Status.RESIZEBOTTOM) this.resizeBottom();
     else if (this.status === Status.RESIZELEFT) this.resizeLeft();
     else if (this.status === Status.MOVE) {
-      this.move();
+      // this.move();
     }
   }
 
@@ -272,24 +327,23 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
     return (this.mouse.x < this.containerPos.right && this.mouse.y < this.containerPos.bottom);
   }
 
-  private move() {
-    this.panTrigger = true;
-    if (this.isSelectionBox == false) {
-      this.scrollTrigger = true;
-    } else {
-      this.scrollTrigger = false;
-    }
+  // private move() {
+  //   this.panTrigger = true;
+  //   if (this.isSelectionBox == false) {
+  //     this.scrollTrigger = true;
+  //   } else {
+  //     this.scrollTrigger = false;
+  //   }
 
-    if (!this.isSelectionBox) {
-      this.card.x = this.mouseClick.left + (this.mouse.x - this.mouseClick.x);
-      this.card.y = this.mouseClick.top + (this.mouse.y - this.mouseClick.y);
+  //   if (!this.isSelectionBox) {
+  //     this.card.x = this.mouseClick.left + (this.mouse.x - this.mouseClick.x);
+  //     this.card.y = this.mouseClick.top + (this.mouse.y - this.mouseClick.y);
 
-      this.card.ox = this.card.x;
-      this.card.oy = this.card.y;
-    }
+  //     this.card.ox = this.card.x;
+  //     this.card.oy = this.card.y;
+  //   }
 
-    // console.log("move", this.card.x);
-  }
+  // }
 
 
   //TODO: ! update movelogic to cater for panned
@@ -324,6 +378,8 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
     this.card.x = this.card.x + panSpeed * (1 / this.scale);
 
     console.log("value", + this.card.x);
+    // this.selectionBox.x = this.selectionBox.x + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
+    // this.selectionBoxChange.emit(this.selectionBox);
     this.mouseClick.left = this.mouseClick.left + panSpeed * (1 / this.scale);
     this.boxPosition2.left = this.boxPosition2.left + panSpeed * (1 / this.scale);
   }
@@ -331,9 +387,9 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
   //Pans the canvas on the y axis while updating cards position and mouseclick for movement/resizing //negative number for up positive for down
   scrollY(panSpeed: number) {
     this.card.y = this.card.y + panSpeed * (1 / this.scale);
+    // this.selectionBox.y = this.selectionBox.y + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
+    // this.selectionBoxChange.emit(this.selectionBox);
     this.mouseClick.top = this.mouseClick.top + panSpeed * (1 / this.scale);
     this.boxPosition2.top = this.boxPosition2.top + panSpeed * (1 / this.scale);
   }
-
-
 }
