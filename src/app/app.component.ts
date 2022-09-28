@@ -45,12 +45,6 @@ export class AppComponent implements OnInit {
   public innerWidthScaled = 0;
 
 
-  // public translate = { scale: this.scale, translateX: 0, translateY: 0 };
-  // private initialContentsPos = { x: 0, y: 0 };
-  // private initialZoomPos = { x: 0, y: 0 };
-  // private pinnedMousePosition = { x: 0, y: 0 };
-  // mousePosition = { x: 0, y: 0 };
-
   private mouseClick!: { x: number, y: number, left: number, top: number }; //mouseClick position in viewport
   private mouse!: { x: number, y: number }; //mouse position of viewport
   private mousePage!: { x: number, y: number }; //mouse position relevant to whole document (including scroll)
@@ -85,30 +79,6 @@ export class AppComponent implements OnInit {
     this.panTrigger = false;
     this.obs = this.src.subscribe(value => {
 
-      // if (this.panTrigger == true) {
-
-      //   if (this.mouse.x < this.panRangeL / this.scale && this.mouse.y > this.panRangeL / this.scale && window.scrollX != 0) {
-      //     this.scrollXBox(this.panSpeed);
-      //     this.scrollPage(this.panSpeed, 0);
-      //   } else if (this.mouse.y < this.panRangeL / this.scale && this.mouse.x > this.panRangeL / this.scale && window.scrollY != 0) {
-      //     this.scrollYBox(this.panSpeed);
-      //     this.scrollPage(0, this.panSpeed);
-      //   } else if (this.mouse.x < this.panRangeL / this.scale && this.mouse.y < this.panRangeL / this.scale && window.scrollX != 0 && window.scrollY != 0) {
-      //     this.scrollXBox(this.panSpeed);
-      //     this.scrollYBox(this.panSpeed);
-      //     this.scrollPage(this.panSpeed, this.panSpeed);
-      //   } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y < this.innerHeightScaled - this.panRangeR / this.scale) {
-      //     this.scrollXBox(this.panSpeedPositive);
-      //     this.scrollPage(this.panSpeedPositive, 0);
-      //   } else if (this.mouse.x < this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y > this.innerHeightScaled - this.panRangeR / this.scale) {
-      //     this.scrollYBox(this.panSpeedPositive);
-      //     this.scrollPage(0, this.panSpeedPositive);
-      //   } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y > this.innerHeightScaled - this.panRangeR / this.scale) {
-      //     this.scrollXBox(this.panSpeedPositive);
-      //     this.scrollYBox(this.panSpeedPositive);
-      //     this.scrollPage(this.panSpeedPositive, this.panSpeedPositive);
-      //   }
-      // }
       if (this.panTrigger == true) {
 
         if (this.mouse.x < this.panRangeL && this.mouse.y > this.panRangeL && this.mouse.y < this.innerHeightScaled - this.panRangeR && window.scrollX != 0) {
@@ -503,28 +473,12 @@ export class AppComponent implements OnInit {
       y: e.pageY + window.scrollY
     }
   }
-  // public scrollPage(xamount: number, yamount: number) {
-  //   window.scrollBy(xamount, yamount);
-  //   // if (this.selection.length && this.status === Status.MOVE && this.cardPanning == false) {
-
-  //   //   this.selectionBox.x = this.mouseClick.left + (this.mouse.x - this.mouseClick.x);
-  //   //   this.selectionBox.y = this.mouseClick.top + (this.mouse.y - this.mouseClick.y);
-  //   // } else 
-  //   // if (this.selection.length && this.status === Status.MOVE && this.cardPanning == true) {
-  //   //   //Pan from the card
-  //   //   // this.selectionBox.x = this.selectionBox.x + (1 * (1 / this.scale));
-  //   //   // this.selectionBox.y = this.selectionBox.y + (this.panSpeedPositive * (1 /this.scale));
-  //   // }
-  // }
 
   scrollXBox(panSpeed: number) {
     console.log('page');
     this.selectionBox.x = this.selectionBox.x + panSpeed * (1 / this.scale);
-    // this.selectionBox.x = this.selectionBox.x + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
-    // this.selectionBoxChange.emit(this.selectionBox);
     this.mouseClick.left = this.mouseClick.left + panSpeed * (1 / this.scale);
-    // this.boxPosition2.left = this.boxPosition2.left + panSpeed * (1 /this.scale);
-
+   
     this.selection.forEach(c => {
       c.x += panSpeed * (1 / this.scale);
       c.ox += panSpeed * (1 / this.scale);
@@ -533,11 +487,8 @@ export class AppComponent implements OnInit {
 
   scrollYBox(panSpeed: number) {
     this.selectionBox.y = this.selectionBox.y + panSpeed * (1 / this.scale);
-    // this.selectionBox.y = this.selectionBox.y + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
-    // this.selectionBoxChange.emit(this.selectionBox);
     this.mouseClick.top = this.mouseClick.top + panSpeed * (1 / this.scale);
-    // this.boxPosition2.top = this.boxPosition2.top + panSpeed * (1 /this.scale);
-
+   
     this.selection.forEach(c => {
       c.y += panSpeed * (1 / this.scale);
       c.oy += panSpeed * (1 / this.scale);

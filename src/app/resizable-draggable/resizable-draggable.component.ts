@@ -81,45 +81,45 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
     this.panTrigger = false;
     this.obs = this.src.subscribe(value => {
 
-      if (false) {
+      // if (false) {
 
-        if (this.mouse.x < this.panRangeL && this.mouse.y > this.panRangeL && this.mouse.y < this.innerHeightScaled - this.panRangeR && window.scrollX != 0) {
-          // console.log('left')
-          this.scrollX(this.panSpeed);
-          this.scrollCanvas(this.panSpeed, 0);
-        } else if (this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x < this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
-          // console.log(' up')
-          this.scrollY(this.panSpeed);
-          this.scrollCanvas(0, this.panSpeed);
-        } else if (this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x > this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
-          // console.log('up right')
-          this.scrollX(this.panSpeedPositive);
-          this.scrollY(this.panSpeed);
-          this.scrollCanvas(this.panSpeedPositive, this.panSpeed);
-        } else if (this.mouse.x < this.panRangeL && this.mouse.y < this.panRangeL && window.scrollX != 0 && window.scrollY != 0) {
-          // console.log('up left')
-          this.scrollX(this.panSpeed);
-          this.scrollY(this.panSpeed);
-          this.scrollCanvas(this.panSpeed, this.panSpeed);
-        } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y < this.innerHeightScaled - this.panRangeR && this.mouse.y > this.panRangeL) {
-          // console.log('right');
-          this.scrollX(this.panSpeedPositive);
-          this.scrollCanvas(this.panSpeedPositive, 0);
-        } else if (this.mouse.x < this.innerWidthScaled - this.panRangeR && this.mouse.x > this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
-          // console.log('down');
-          this.scrollY(this.panSpeedPositive);
-          this.scrollCanvas(0, this.panSpeedPositive);
-        } else if (this.mouse.x < this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR && window.scrollX > 0) {
-          this.scrollY(this.panSpeedPositive);
-          this.scrollX(this.panSpeed);
-          this.scrollCanvas(this.panSpeed, this.panSpeedPositive);
-        } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
-          // console.log('down right')
-          this.scrollX(this.panSpeedPositive);
-          this.scrollY(this.panSpeedPositive);
-          this.scrollCanvas(this.panSpeedPositive, this.panSpeedPositive);
-        }
-      }
+      //   if (this.mouse.x < this.panRangeL && this.mouse.y > this.panRangeL && this.mouse.y < this.innerHeightScaled - this.panRangeR && window.scrollX != 0) {
+      //     // console.log('left')
+      //     this.scrollX(this.panSpeed);
+      //     this.scrollCanvas(this.panSpeed, 0);
+      //   } else if (this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x < this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
+      //     // console.log(' up')
+      //     this.scrollY(this.panSpeed);
+      //     this.scrollCanvas(0, this.panSpeed);
+      //   } else if (this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x > this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
+      //     // console.log('up right')
+      //     this.scrollX(this.panSpeedPositive);
+      //     this.scrollY(this.panSpeed);
+      //     this.scrollCanvas(this.panSpeedPositive, this.panSpeed);
+      //   } else if (this.mouse.x < this.panRangeL && this.mouse.y < this.panRangeL && window.scrollX != 0 && window.scrollY != 0) {
+      //     // console.log('up left')
+      //     this.scrollX(this.panSpeed);
+      //     this.scrollY(this.panSpeed);
+      //     this.scrollCanvas(this.panSpeed, this.panSpeed);
+      //   } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y < this.innerHeightScaled - this.panRangeR && this.mouse.y > this.panRangeL) {
+      //     // console.log('right');
+      //     this.scrollX(this.panSpeedPositive);
+      //     this.scrollCanvas(this.panSpeedPositive, 0);
+      //   } else if (this.mouse.x < this.innerWidthScaled - this.panRangeR && this.mouse.x > this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
+      //     // console.log('down');
+      //     this.scrollY(this.panSpeedPositive);
+      //     this.scrollCanvas(0, this.panSpeedPositive);
+      //   } else if (this.mouse.x < this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR && window.scrollX > 0) {
+      //     this.scrollY(this.panSpeedPositive);
+      //     this.scrollX(this.panSpeed);
+      //     this.scrollCanvas(this.panSpeed, this.panSpeedPositive);
+      //   } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
+      //     // console.log('down right')
+      //     this.scrollX(this.panSpeedPositive);
+      //     this.scrollY(this.panSpeedPositive);
+      //     this.scrollCanvas(this.panSpeedPositive, this.panSpeedPositive);
+      //   }
+      // }
     });
   }
 
