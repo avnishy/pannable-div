@@ -33,10 +33,10 @@ export class AppComponent implements OnInit {
   private scaleInterval = 0.1; // 10 % of scale value
   public isCardPanning = false; // is window being panned from a card
 
-  public panSpeed = -2; //how fast it pans
-  public panSpeedPositive = 2; //how fast it pans
-  public panRangeL = 24 //how close to edge to start panning (lower closer) lEFT TOP
-  public panRangeR = 44 //how close to edge to start panning (lower closer) RIGHT BOTTOM
+  public panSpeed = -4; //how fast it pans
+  public panSpeedPositive = 4; //how fast it pans
+  public panRangeL = 20 //how close to edge to start panning (lower closer) lEFT TOP
+  public panRangeR = 40 //how close to edge to start panning (lower closer) RIGHT BOTTOM
   src = interval(10);
   obs!: Subscription;
   panTrigger!: boolean;
