@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, HostListener, OnChanges, OnDestroy, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { Card } from '../models/card';
-import { interval, Observable, of, Subscription } from 'rxjs';
 
 const enum Status {
   OFF = 0,
@@ -20,108 +19,26 @@ const enum Status {
   templateUrl: './resizable-draggable.component.html',
   styleUrls: ['./resizable-draggable.component.scss']
 })
-export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnChanges {
-  // @Input() public width!: number;
-  // @Input() public height!: number;
-  // @Input() public left!: number;
-  // @Input() public top!: number;
-  // @Input() public type!: string;
-  // @Input() public image!: string;
-  // @Input() public color!: string;
-
+export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnChanges {  
   @Input() public scale: number = 1;
   @Input() public card!: Card;
   @Input() public selected?= false;
-  @Input() public isSelectionBox = false;
-  @Input() public selectionBox!: { width: number, height: number, x: number, y: number };
-  @Output() selectionBoxChange = new EventEmitter<{ width: number, height: number, x: number, y: number }>();
-  @Input() public numberOfCardsSelected = 0;
-  @Input() public translate!: { scale: number, translateX: number, translateY: number }; //TODO REMOVE UNEEDED
-  @Output() public translateChange = new EventEmitter<{ scale: number, translateX: number, translateY: number }>(); //TODO REMOVE
-  @Output() public updatePan = new EventEmitter<void>();
-
-  @Input() public cardPanning!: boolean
-  @Output() public cardPanningChange = new EventEmitter<boolean>;
-
-  @Output() public scrollDistance = new EventEmitter<{ scrollX: number, scrollY: number }>;
-
+  
   @Output() public clearSelection = new EventEmitter<void>();
   @Output() public selectCard = new EventEmitter<Card>();
 
   @ViewChild("box") public box!: ElementRef;
 
+  public status: Status = Status.OFF;
+
   private boxPosition!: { left: number, top: number };
   private containerPos!: { left: number, top: number, right: number, bottom: number };
-  public mouse!: { x: number, y: number }
-  public status: Status = Status.OFF;
-  private mouseClick!: { x: number, y: number, left: number, top: number }
-  private cardTestImage = "url('https://www.tutorialspoint.com/images/seaborn-4.jpg?v=2')"
-
+  private mouse!: { x: number, y: number };
+  private mouseClick!: { x: number, y: number, left: number, top: number };
   private boxPosition2!: { left: number, top: number, width: number, height: number, right: number, bottom: number };
   private minSize = 20;
 
-  subscription!: Subscription; //subscription to subscribe to the timer
-  @Input() public panSpeed!: number; //how fast it pans
-  @Input() public panSpeedPositive!: number; //how fast it pans
-  private panRangeL = 20 //how close to edge to start panning (lower closer) lEFT TOP
-  private panRangeR = 40 //how close to edge to start panning (lower closer) RIGHT BOTTOM
-
-  src = interval(10);
-  obs!: Subscription;
-  panTrigger!: boolean;
-  // public innerHeightScaled = 0;
-  // public innerWidthScaled = 0;
-  @Input() public innerHeightScaled!: number;
-  @Input() public innerWidthScaled!: number;
-  public scrollTrigger = false;
-
   ngOnInit() {
-    this.innerWidthScaled = window.innerWidth * (1 / this.scale);
-    this.innerHeightScaled = window.innerHeight * (1 / this.scale);
-    // set to pan then depending on where mouse is subscribe to the observable and track how long its held down for (calling the function)
-    this.panTrigger = false;
-    this.obs = this.src.subscribe(value => {
-
-      if (false) {
-
-        if (this.mouse.x < this.panRangeL && this.mouse.y > this.panRangeL && this.mouse.y < this.innerHeightScaled - this.panRangeR && window.scrollX != 0) {
-          // console.log('left')
-          this.scrollX(this.panSpeed);
-          this.scrollCanvas(this.panSpeed, 0);
-        } else if (this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x < this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
-          // console.log(' up')
-          this.scrollY(this.panSpeed);
-          this.scrollCanvas(0, this.panSpeed);
-        } else if (this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x > this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
-          // console.log('up right')
-          this.scrollX(this.panSpeedPositive);
-          this.scrollY(this.panSpeed);
-          this.scrollCanvas(this.panSpeedPositive, this.panSpeed);
-        } else if (this.mouse.x < this.panRangeL && this.mouse.y < this.panRangeL && window.scrollX != 0 && window.scrollY != 0) {
-          // console.log('up left')
-          this.scrollX(this.panSpeed);
-          this.scrollY(this.panSpeed);
-          this.scrollCanvas(this.panSpeed, this.panSpeed);
-        } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y < this.innerHeightScaled - this.panRangeR && this.mouse.y > this.panRangeL) {
-          // console.log('right');
-          this.scrollX(this.panSpeedPositive);
-          this.scrollCanvas(this.panSpeedPositive, 0);
-        } else if (this.mouse.x < this.innerWidthScaled - this.panRangeR && this.mouse.x > this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
-          // console.log('down');
-          this.scrollY(this.panSpeedPositive);
-          this.scrollCanvas(0, this.panSpeedPositive);
-        } else if (this.mouse.x < this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR && window.scrollX > 0) {
-          this.scrollY(this.panSpeedPositive);
-          this.scrollX(this.panSpeed);
-          this.scrollCanvas(this.panSpeed, this.panSpeedPositive);
-        } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
-          // console.log('down right')
-          this.scrollX(this.panSpeedPositive);
-          this.scrollY(this.panSpeedPositive);
-          this.scrollCanvas(this.panSpeedPositive, this.panSpeedPositive);
-        }
-      }
-    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -136,12 +53,7 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
     this.loadContainer();
   }
 
-  ngOnDestroy() {
-    this.obs.unsubscribe();
-  }
-
   private loadBox() {
-    const { left, top, right, bottom, width, height } = this.box.nativeElement.getBoundingClientRect();
     this.boxPosition = this.box.nativeElement.getBoundingClientRect();
     // this.boxPosition2 = { left: left, top: top, right: right, bottom: bottom , width: width, height: height } //TODO: combine these two into one line
   }
@@ -165,35 +77,17 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
       event.stopPropagation(); // Stops it from moving onto the drag to move event
     } else if (status === 2) {
       this.mouseClick = { x: event.clientX * (1 / this.scale), y: event.clientY * (1 / this.scale), left: this.card.x, top: this.card.y };
-      this.innerWidthScaled = window.innerWidth * (1 / this.scale);
-      this.innerHeightScaled = window.innerHeight * (1 / this.scale);
-      this.panRangeL = 40 / this.scale;
-      this.panRangeR = 40 / this.scale;
+        
       this.clearSelection.emit();
-
       this.selectCard.emit(this.card);
+      
       // event.stopPropagation();
     } else {
       this.loadBox();
       this.card.selected = false;
-      this.panTrigger = false;
     }
 
     this.status = status;
-  }
-
-  /**
-   * 
-   * This sets the mouseClick variable, 
-   * need this to be set when multi-selected and dragging
-   * should only executed incase of multi-selection
-   */
-  public setMouseClick(event: MouseEvent): void {
-    if (!this.card.selected) {
-      return;
-    }
-
-    this.mouseClick = { x: event.clientX * (1 / this.scale), y: event.clientY * (1 / this.scale), left: this.card.x, top: this.card.y };
   }
 
   @HostListener('window:mousemove', ['$event'])
@@ -209,9 +103,6 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
     else if (this.status === Status.RESIZERIGHT) this.resizeRight();
     else if (this.status === Status.RESIZEBOTTOM) this.resizeBottom();
     else if (this.status === Status.RESIZELEFT) this.resizeLeft();
-    else if (this.status === Status.MOVE) {
-      // this.move();
-    }
   }
 
   //TODO: freestyle resizes add in scrollX + Y to calculations and reneable
@@ -296,6 +187,7 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
       this.card.width = width;
       this.card.height = height;
       this.card.x = this.mouse.x + (window.scrollX * (1 / this.scale));
+      this.card.ox = this.card.x;
     }
   }
 
@@ -320,31 +212,14 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
       this.card.width = width;
       this.card.height = height;
       this.card.y = this.mouse.y + (window.scrollY * (1 / this.scale));
+      this.card.oy = this.card.y;
+      console.log(this.card.y)
     }
   }
 
   private resizeCondMeet() {
     return (this.mouse.x < this.containerPos.right && this.mouse.y < this.containerPos.bottom);
   }
-
-  // private move() {
-  //   this.panTrigger = true;
-  //   if (this.isSelectionBox == false) {
-  //     this.scrollTrigger = true;
-  //   } else {
-  //     this.scrollTrigger = false;
-  //   }
-
-  //   if (!this.isSelectionBox) {
-  //     this.card.x = this.mouseClick.left + (this.mouse.x - this.mouseClick.x);
-  //     this.card.y = this.mouseClick.top + (this.mouse.y - this.mouseClick.y);
-
-  //     this.card.ox = this.card.x;
-  //     this.card.oy = this.card.y;
-  //   }
-
-  // }
-
 
   //TODO: ! update movelogic to cater for panned
   private moveCondMeet() {
@@ -358,38 +233,5 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
       this.mouse.y > this.containerPos.top + offsetTop &&
       this.mouse.y < this.containerPos.bottom - offsetBottom
     );
-  }
-
-  //Updates the translation on the parent (canvas) to reflect state of panned board
-  //TODO unecessary can remove
-  updateTranslation() {
-    this.translateChange.emit({ scale: this.translate.scale, translateX: this.translate.translateX, translateY: this.translate.translateY });
-    this.updatePan.emit();
-  }
-
-  //TODO: update ifstatements above so this isnt called to improve performance
-  scrollCanvas(x: number, y: number) {
-    if (this.scrollTrigger == true) {
-      this.scrollDistance.emit({ scrollX: x, scrollY: y });
-    }
-  }
-
-  scrollX(panSpeed: number) {
-    this.card.x = this.card.x + panSpeed * (1 / this.scale);
-
-    console.log("value", + this.card.x);
-    // this.selectionBox.x = this.selectionBox.x + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
-    // this.selectionBoxChange.emit(this.selectionBox);
-    this.mouseClick.left = this.mouseClick.left + panSpeed * (1 / this.scale);
-    this.boxPosition2.left = this.boxPosition2.left + panSpeed * (1 / this.scale);
-  }
-
-  //Pans the canvas on the y axis while updating cards position and mouseclick for movement/resizing //negative number for up positive for down
-  scrollY(panSpeed: number) {
-    this.card.y = this.card.y + panSpeed * (1 / this.scale);
-    // this.selectionBox.y = this.selectionBox.y + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
-    // this.selectionBoxChange.emit(this.selectionBox);
-    this.mouseClick.top = this.mouseClick.top + panSpeed * (1 / this.scale);
-    this.boxPosition2.top = this.boxPosition2.top + panSpeed * (1 / this.scale);
   }
 }

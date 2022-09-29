@@ -10,7 +10,7 @@ import { Card } from './models/card';
 import { Boundary } from './models/boundary';
 import { Point } from './models/point';
 import { CardService } from './services/card.service';
-import { interval, Observable, of, Subscription } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 
 const enum Status {
   OFF = 0,
@@ -84,33 +84,7 @@ export class AppComponent implements OnInit {
     // set to pan then depending on where mouse is subscribe to the observable and track how long its held down for (calling the function)
     this.panTrigger = false;
     this.obs = this.src.subscribe(value => {
-
-      // if (this.panTrigger == true) {
-
-      //   if (this.mouse.x < this.panRangeL / this.scale && this.mouse.y > this.panRangeL / this.scale && window.scrollX != 0) {
-      //     this.scrollXBox(this.panSpeed);
-      //     this.scrollPage(this.panSpeed, 0);
-      //   } else if (this.mouse.y < this.panRangeL / this.scale && this.mouse.x > this.panRangeL / this.scale && window.scrollY != 0) {
-      //     this.scrollYBox(this.panSpeed);
-      //     this.scrollPage(0, this.panSpeed);
-      //   } else if (this.mouse.x < this.panRangeL / this.scale && this.mouse.y < this.panRangeL / this.scale && window.scrollX != 0 && window.scrollY != 0) {
-      //     this.scrollXBox(this.panSpeed);
-      //     this.scrollYBox(this.panSpeed);
-      //     this.scrollPage(this.panSpeed, this.panSpeed);
-      //   } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y < this.innerHeightScaled - this.panRangeR / this.scale) {
-      //     this.scrollXBox(this.panSpeedPositive);
-      //     this.scrollPage(this.panSpeedPositive, 0);
-      //   } else if (this.mouse.x < this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y > this.innerHeightScaled - this.panRangeR / this.scale) {
-      //     this.scrollYBox(this.panSpeedPositive);
-      //     this.scrollPage(0, this.panSpeedPositive);
-      //   } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR / this.scale && this.mouse.y > this.innerHeightScaled - this.panRangeR / this.scale) {
-      //     this.scrollXBox(this.panSpeedPositive);
-      //     this.scrollYBox(this.panSpeedPositive);
-      //     this.scrollPage(this.panSpeedPositive, this.panSpeedPositive);
-      //   }
-      // }
       if (this.panTrigger == true) {
-
         if (this.mouse.x < this.panRangeL && this.mouse.y > this.panRangeL && this.mouse.y < this.innerHeightScaled - this.panRangeR && window.scrollX != 0) {
           // console.log('left')
           this.scrollXBox(this.panSpeed);
@@ -164,8 +138,8 @@ export class AppComponent implements OnInit {
     this.innerHeightScaled = window.innerHeight * (1 / this.scale);
     this.prevMouse = { x: event.pageX, y: event.pageY };
 
-    const x = event.clientX * this.scale;
-    const y = event.clientY / this.scale;
+    // const x = event.clientX * this.scale; TODO remove not needed
+    // const y = event.clientY / this.scale; TODO remove not needed
     const xP = event.pageX / this.scale;
     const yP = event.pageY / this.scale;
 
@@ -193,8 +167,8 @@ export class AppComponent implements OnInit {
       this.panTrigger = true;
       this.selectionBoxEnabled = true;
     } else if (this.panningEnabled) {
-      // this.mouseClick.x = event.clientX; TODO remove not needed
-      // this.mouseClick.y = event.clientY; TODO remove not needed
+      // this.mouseClick.x = event.clientX / this.scale; //TODO remove not needed
+      // this.mouseClick.y = event.clientY / this.scale; //TODO remove not needed
       this.isPanning = true;
       this.status = Status.OFF;
       this.selectionBoxEnabled = false //! May not be needed
@@ -225,7 +199,7 @@ export class AppComponent implements OnInit {
       x: event.clientX / this.scale,
       y: event.clientY / this.scale
     };
-    //TODO: add mosue page on mouse move
+    //TODO: add mouse page on mouse move
     this.mousePage = {
       x: event.pageX,
       y: event.pageY
@@ -240,10 +214,12 @@ export class AppComponent implements OnInit {
       //Updating it to be the amount that the card has moved (scaled)
       this.selectionBox.x = this.mouseClickPage.left + ((this.mousePage.x - this.mouseClickPage.x) / this.scale);
       this.selectionBox.y = this.mouseClickPage.top + ((this.mousePage.y - this.mouseClickPage.y) / this.scale);
-
       this.selection.forEach((c) => {
-        c.x = c.ox + (this.mouse.x - this.mouseClick.x);
-        c.y = c.oy + (this.mouse.y - this.mouseClick.y);
+        c.x = c.ox + (this.mouse.x - this.mouseClick.x / this.scale);
+        c.y = c.oy + (this.mouse.y - this.mouseClick.y / this.scale);
+
+        console.log("app card pos:"+c.y)
+
       });
     } else if (this.isPanning) {
 

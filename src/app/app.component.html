@@ -26,17 +26,7 @@
             [scale]="scale" 
             [card]="card"
             [selected]="card.selected"
-            (clearSelection)="clearSelection()"
-            (scrollDistance)="scrollPage($event.scrollX, $event.scrollY)"
-            (updatePan)="panFromCard()"
-            [isSelectionBox]="selectionBoxEnabled"
-            [numberOfCardsSelected]="selection.length"
-            [(selectionBox)]="selectionBox"
-            [panSpeed]="panSpeed"
-            [panSpeedPositive]="panSpeedPositive"
-            [(cardPanning)]="isCardPanning"
-            [innerWidthScaled]="innerWidthScaled"
-            [innerHeightScaled]="innerHeightScaled"
+            (clearSelection)="clearSelection()"           
             (selectCard)="selectCard($event)">
             <!-- TODO -->
             <!-- track by -->
