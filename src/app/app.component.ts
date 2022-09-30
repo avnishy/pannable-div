@@ -10,7 +10,7 @@ import { Card } from './models/card';
 import { Boundary } from './models/boundary';
 import { Point } from './models/point';
 import { CardService } from './services/card.service';
-import { interval, Subscription } from 'rxjs';
+import { interval, Observable, of, Subscription } from 'rxjs';
 
 const enum Status {
   OFF = 0,
@@ -59,7 +59,6 @@ export class AppComponent implements OnInit {
 
   public selection: Card[] = [];
   public selectionBox: { width: number, height: number, x: number, y: number } = { width: 0, height: 0, x: 0, y: 0 }
-  public selectionBoxEnabled = false;
 
   public cards: Card[] = this.cardService.getCards();
 
@@ -84,7 +83,9 @@ export class AppComponent implements OnInit {
     // set to pan then depending on where mouse is subscribe to the observable and track how long its held down for (calling the function)
     this.panTrigger = false;
     this.obs = this.src.subscribe(value => {
+
       if (this.panTrigger == true) {
+
         if (this.mouse.x < this.panRangeL && this.mouse.y > this.panRangeL && this.mouse.y < this.innerHeightScaled - this.panRangeR && window.scrollX != 0) {
           // console.log('left')
           this.scrollXBox(this.panSpeed);
@@ -142,8 +143,8 @@ export class AppComponent implements OnInit {
     this.innerHeightScaled = window.innerHeight * (1 / this.scale);
     this.prevMouse = { x: event.pageX, y: event.pageY };
 
-    // const x = event.clientX * this.scale; TODO remove not needed
-    // const y = event.clientY / this.scale; TODO remove not needed
+    const x = event.clientX * this.scale;
+    const y = event.clientY / this.scale;
     const xP = event.pageX / this.scale;
     const yP = event.pageY / this.scale;
 
@@ -169,17 +170,14 @@ export class AppComponent implements OnInit {
       });
       this.status = Status.MOVE;
       this.panTrigger = true;
-      this.selectionBoxEnabled = true;
     } else if (this.panningEnabled) {
-      // this.mouseClick.x = event.clientX / this.scale; //TODO remove not needed
-      // this.mouseClick.y = event.clientY / this.scale; //TODO remove not needed
+      // this.mouseClick.x = event.clientX; TODO remove not needed
+      // this.mouseClick.y = event.clientY; TODO remove not needed
       this.isPanning = true;
       this.status = Status.OFF;
-      this.selectionBoxEnabled = false //! May not be needed
     } else {
       this.isSelecting = true;
       this.status = Status.OFF;
-      this.selectionBoxEnabled = false //! May not be needed
       this.panTrigger = false;
     }
 
@@ -214,17 +212,15 @@ export class AppComponent implements OnInit {
 
     // if (this.selection.length && this.status === Status.MOVE && this.isCardPanning == false) {
     if (this.selection.length && this.status === Status.MOVE) {
-      
       //Updating it to be the amount that the card has moved (scaled)
       this.selectionBox.x = this.mouseClickPage.left + ((this.mousePage.x - this.mouseClickPage.x) / this.scale);
       this.selectionBox.y = this.mouseClickPage.top + ((this.mousePage.y - this.mouseClickPage.y) / this.scale);
+
       this.selection.forEach((c) => {
         c.x = c.ox + (this.mouse.x - this.mouseClick.x / this.scale);
         c.y = c.oy + (this.mouse.y - this.mouseClick.y / this.scale);
-
-        console.log("app card pos:"+c.y)
-
       });
+
     } else if (this.isPanning) {
 
       // re-assigned while panning to avoid ui flickering due to transalate values 
@@ -487,10 +483,6 @@ export class AppComponent implements OnInit {
         this.cards.push(element);
       }
     });
-  }
-
-  panFromCard() {
-    this.update();
   }
 
   public updateCanvasWidth(amount: number) {
