@@ -134,6 +134,10 @@ export class AppComponent implements OnInit {
   }
 
   public handleMousedown(event: MouseEvent): void {
+    //Combining mouse wheel click and mouse wheel drag to pan mode
+    if (event.button === 1) {
+      return;
+       }
     this.innerWidthScaled = window.innerWidth * (1 / this.scale);
     this.innerHeightScaled = window.innerHeight * (1 / this.scale);
     this.prevMouse = { x: event.pageX, y: event.pageY };
