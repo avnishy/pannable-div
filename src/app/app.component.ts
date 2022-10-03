@@ -66,7 +66,8 @@ export class AppComponent implements OnInit {
   private originalCanvasWidth = 2000;
   public canvasHeight = 2000;
   public canvasWidth = 2000;
-
+  public midX = window.innerWidth / 2 ;
+  public midY = window.innerHeight / 2;
   public prevMouse = { x: 0, y: 0 };
 
 
@@ -312,11 +313,26 @@ export class AppComponent implements OnInit {
   };
 
   public handleZoomTo(scale: number): void {
+    const image_loc = {
+      x: this.midX + (window.scrollX),
+      y: this.midY +(window.scrollY)
+    }
+    const zoom_point = { x: image_loc.x / this.scale, y: image_loc.y / this.scale }
     this.scale = scale;
     this.canvasHeight = this.originalCanvasHeight * this.scale;
     this.canvasWidth = this.originalCanvasWidth * this.scale;
     this.update();
-
+    const zoom_point_new = {
+      x: (zoom_point.x ) * this.scale,
+      y: (zoom_point.y ) * this.scale,
+    }
+    // console.log(window.scrollX)
+    const newScroll = {
+      x: zoom_point_new.x - image_loc.x,
+      y: zoom_point_new.y - image_loc.y
+    }
+    //* Scroll window by that amount
+    window.scrollBy(newScroll.x, newScroll.y);
   }
 
   @HostListener('body:mouseleave', ['$event'])
@@ -388,6 +404,11 @@ export class AppComponent implements OnInit {
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
+    const image_loc = {
+      x: this.midX + (window.scrollX),
+      y: this.midY +(window.scrollY)
+    }
+    const zoom_point = { x: image_loc.x / this.scale, y: image_loc.y / this.scale }
     const minus = 189;
     const plus = 187;
 
@@ -401,6 +422,18 @@ export class AppComponent implements OnInit {
       this.handleZoomIn();
       event.preventDefault();
     }
+    const zoom_point_new = {
+      x: (zoom_point.x ) * this.scale,
+      y: (zoom_point.y ) * this.scale,
+    }
+    // console.log(window.scrollX)
+    const newScroll = {
+      x: zoom_point_new.x - image_loc.x,
+      y: zoom_point_new.y - image_loc.y
+    }
+    //* Scroll window by that amount
+    window.scrollBy(newScroll.x, newScroll.y);
+
   }
 
   private update(): void {
@@ -497,12 +530,12 @@ export class AppComponent implements OnInit {
     window.scrollBy(xamount, yamount);
   }
 
-  public handleMouseScroll(e: WheelEvent) {
-    const image_loc = {
-      x: e.pageX + window.scrollX,
-      y: e.pageY + window.scrollY
-    }
-  }
+  // public handleMouseScroll(e: WheelEvent) {
+  //   const image_loc = {
+  //     x: e.pageX + window.scrollX,
+  //     y: e.pageY + window.scrollY
+  //   }
+  // }
   // public scrollPage(xamount: number, yamount: number) {
   //   window.scrollBy(xamount, yamount);
   //   // if (this.selection.length && this.status === Status.MOVE && this.cardPanning == false) {
@@ -547,5 +580,46 @@ export class AppComponent implements OnInit {
   public scrollTo(xamount: number, yamount: number) {
     window.scrollTo(xamount, yamount);
   }
+  //ZoomIn Form Mid in Veiwport with UI Buttons
+  public zoomInButton(_scaleInterval: number = this.scaleInterval): void {
+    const image_loc = {
+      x: this.midX + (window.scrollX),
+      y: this.midY +(window.scrollY)
+    }
+    const zoom_point = { x: image_loc.x / this.scale, y: image_loc.y / this.scale }
+    this.handleZoomIn();
+    const zoom_point_new = {
+      x: (zoom_point.x ) * this.scale,
+      y: (zoom_point.y ) * this.scale,
+    }
+    console.log(window.scrollX)
+    const newScroll = {
+      x: zoom_point_new.x - image_loc.x,
+      y: zoom_point_new.y - image_loc.y
+    }
+    //* Scroll window by that amount
+    window.scrollBy(newScroll.x, newScroll.y);
+  }
 
+  //ZoomOut Form Mid in Veiwport with UI Buttons
+  public zoomOutButton(_scaleInterval: number = this.scaleInterval): void {
+    const image_loc = {
+      x: this.midX + (window.scrollX),
+      y: this.midY +(window.scrollY)
+    }
+    const zoom_point = { x: image_loc.x / this.scale, y: image_loc.y / this.scale }
+    this.handleZoomOut();
+
+    const zoom_point_new = {
+      x: zoom_point.x * this.scale,
+      y: zoom_point.y * this.scale,
+    }
+    console.log(zoom_point)
+    const newScroll = {
+      x: zoom_point_new.x - image_loc.x,
+      y: zoom_point_new.y - image_loc.y
+    }
+    //* Scroll window by that amount
+    window.scrollBy(newScroll.x, newScroll.y);
+  }
 }
