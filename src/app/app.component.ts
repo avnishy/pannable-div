@@ -404,14 +404,10 @@ export class AppComponent implements OnInit {
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
-    const image_loc = {
-      x: this.midX + (window.scrollX),
-      y: this.midY +(window.scrollY)
-    }
-    const zoom_point = { x: image_loc.x / this.scale, y: image_loc.y / this.scale }
+    const zoom_point = { x: (this.midX + (window.scrollX)) / this.scale, y: (this.midY +(window.scrollY)) / this.scale }
     const minus = 189;
     const plus = 187;
-
+    
     if (event.code === 'Space' && event.target == document.body) {
       this.panningEnabled = true;
       event.preventDefault()
@@ -428,8 +424,8 @@ export class AppComponent implements OnInit {
     }
     // console.log(window.scrollX)
     const newScroll = {
-      x: zoom_point_new.x - image_loc.x,
-      y: zoom_point_new.y - image_loc.y
+      x: zoom_point_new.x - (this.midX + (window.scrollX)),
+      y: zoom_point_new.y - (this.midY +(window.scrollY))
     }
     //* Scroll window by that amount
     window.scrollBy(newScroll.x, newScroll.y);
@@ -580,36 +576,20 @@ export class AppComponent implements OnInit {
   public scrollTo(xamount: number, yamount: number) {
     window.scrollTo(xamount, yamount);
   }
-  //ZoomIn Form Mid in Veiwport with UI Buttons
-  public zoomInButton(_scaleInterval: number = this.scaleInterval): void {
-    const image_loc = {
-      x: this.midX + (window.scrollX),
-      y: this.midY +(window.scrollY)
-    }
-    const zoom_point = { x: image_loc.x / this.scale, y: image_loc.y / this.scale }
-    this.handleZoomIn();
-    const zoom_point_new = {
-      x: (zoom_point.x ) * this.scale,
-      y: (zoom_point.y ) * this.scale,
-    }
-    console.log(window.scrollX)
-    const newScroll = {
-      x: zoom_point_new.x - image_loc.x,
-      y: zoom_point_new.y - image_loc.y
-    }
-    //* Scroll window by that amount
-    window.scrollBy(newScroll.x, newScroll.y);
-  }
 
   //ZoomOut Form Mid in Veiwport with UI Buttons
-  public zoomOutButton(_scaleInterval: number = this.scaleInterval): void {
+  public zoomButton(flag: string): void {
     const image_loc = {
       x: this.midX + (window.scrollX),
       y: this.midY +(window.scrollY)
     }
     const zoom_point = { x: image_loc.x / this.scale, y: image_loc.y / this.scale }
+    if (flag ==='zoomout'){
     this.handleZoomOut();
-
+    }
+    else if(flag === 'zoomin'){
+      this.handleZoomIn();
+    }
     const zoom_point_new = {
       x: zoom_point.x * this.scale,
       y: zoom_point.y * this.scale,
