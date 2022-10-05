@@ -213,7 +213,6 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
       this.card.height = height;
       this.card.y = this.mouse.y + (window.scrollY * (1 / this.scale));
       this.card.oy = this.card.y;
-      console.log(this.card.y)
     }
   }
 

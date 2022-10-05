@@ -13,8 +13,8 @@
 
 <app-zoom-controls 
     [zoomLevel]="scale"
-    (zoomIn)="zoomButton('zoomin')" 
-    (zoomOut)="zoomButton('zoomout')" 
+    (zoomIn)="handleZoomIn()" 
+    (zoomOut)="handleZoomOut()" 
     (zoomTo)="handleZoomTo($event)">
 </app-zoom-controls>
 
