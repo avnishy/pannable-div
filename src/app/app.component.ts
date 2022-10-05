@@ -30,6 +30,7 @@ export class AppComponent implements OnInit {
   private isPanning = false;
   private isSelecting = false;
   public scale = 1;
+  public previousScale = 1;
   private scaleInterval = 0.1; // 10 % of scale value
   public isCardPanning = false; // is window being panned from a card
 
@@ -43,13 +44,6 @@ export class AppComponent implements OnInit {
   outsideOfViewPort = false;
   public innerHeightScaled = 0;
   public innerWidthScaled = 0;
-
-
-  // public translate = { scale: this.scale, translateX: 0, translateY: 0 };
-  // private initialContentsPos = { x: 0, y: 0 };
-  // private initialZoomPos = { x: 0, y: 0 };
-  // private pinnedMousePosition = { x: 0, y: 0 };
-  // mousePosition = { x: 0, y: 0 };
 
   private mouseClick!: { x: number, y: number, left: number, top: number }; //mouseClick position in viewport
   private mouse!: { x: number, y: number }; //mouse position of viewport
@@ -66,7 +60,7 @@ export class AppComponent implements OnInit {
   private originalCanvasWidth = 2000;
   public canvasHeight = 2000;
   public canvasWidth = 2000;
-  public midX = window.innerWidth / 2 ;
+  public midX = window.innerWidth / 2;
   public midY = window.innerHeight / 2;
   public prevMouse = { x: 0, y: 0 };
 
@@ -88,29 +82,23 @@ export class AppComponent implements OnInit {
       if (this.panTrigger == true) {
 
         if (this.mouse.x < this.panRangeL && this.mouse.y > this.panRangeL && this.mouse.y < this.innerHeightScaled - this.panRangeR && window.scrollX != 0) {
-          // console.log('left')
           this.scrollXBox(this.panSpeed);
           this.scrollPage(this.panSpeed, 0);
         } else if (this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x < this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
-          // console.log(' up')
           this.scrollYBox(this.panSpeed);
           this.scrollPage(0, this.panSpeed);
         } else if (this.mouse.y < this.panRangeL && this.mouse.x > this.panRangeL && this.mouse.x > this.innerWidthScaled - this.panRangeR && window.scrollY != 0) {
-          // console.log('up right')
           this.scrollXBox(this.panSpeedPositive);
           this.scrollYBox(this.panSpeed);
           this.scrollPage(this.panSpeedPositive, this.panSpeed);
         } else if (this.mouse.x < this.panRangeL && this.mouse.y < this.panRangeL && window.scrollX != 0 && window.scrollY != 0) {
-          // console.log('up left')
           this.scrollXBox(this.panSpeed);
           this.scrollYBox(this.panSpeed);
           this.scrollPage(this.panSpeed, this.panSpeed);
         } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y < this.innerHeightScaled - this.panRangeR && this.mouse.y > this.panRangeL) {
-          // console.log('right');
           this.scrollXBox(this.panSpeedPositive);
           this.scrollPage(this.panSpeedPositive, 0);
         } else if (this.mouse.x < this.innerWidthScaled - this.panRangeR && this.mouse.x > this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
-          // console.log('down');
           this.scrollYBox(this.panSpeedPositive);
           this.scrollPage(0, this.panSpeedPositive);
         } else if (this.mouse.x < this.panRangeL && this.mouse.y > this.innerHeightScaled - this.panRangeR && window.scrollX > 0) {
@@ -118,7 +106,6 @@ export class AppComponent implements OnInit {
           this.scrollXBox(this.panSpeed);
           this.scrollPage(this.panSpeed, this.panSpeedPositive);
         } else if (this.mouse.x > this.innerWidthScaled - this.panRangeR && this.mouse.y > this.innerHeightScaled - this.panRangeR) {
-          // console.log('down right')
           this.scrollXBox(this.panSpeedPositive);
           this.scrollYBox(this.panSpeedPositive);
           this.scrollPage(this.panSpeedPositive, this.panSpeedPositive);
@@ -139,7 +126,7 @@ export class AppComponent implements OnInit {
     //Combining mouse wheel click and mouse wheel drag to pan mode
     if (event.button === 1) {
       return;
-       }
+    }
     this.innerWidthScaled = window.innerWidth * (1 / this.scale);
     this.innerHeightScaled = window.innerHeight * (1 / this.scale);
     this.prevMouse = { x: event.pageX, y: event.pageY };
@@ -172,8 +159,6 @@ export class AppComponent implements OnInit {
       this.status = Status.MOVE;
       this.panTrigger = true;
     } else if (this.panningEnabled) {
-      // this.mouseClick.x = event.clientX; TODO remove not needed
-      // this.mouseClick.y = event.clientY; TODO remove not needed
       this.isPanning = true;
       this.status = Status.OFF;
     } else {
@@ -234,10 +219,9 @@ export class AppComponent implements OnInit {
       const diffXPan = -1 * (this.mousePage.x - this.prevMouse.x);
       const diffYPan = -1 * (this.mousePage.y - this.prevMouse.y);
       this.scrollPage(diffXPan, diffYPan);
-      // this.prevMouse.x = this.mousePage.x;
-      // this.prevMouse.y = this.mousePage.y; //update previous x & y values
       this.update();
-    } else if (!this.panningEnabled && this.isSelecting) {
+      } 
+      else if (!this.panningEnabled && this.isSelecting) {
       this.drawSelectionBox();
     }
   }
@@ -270,69 +254,31 @@ export class AppComponent implements OnInit {
       this.clearSelection();
       return;
     }
-
-    // const padding = 10;
-    // const newMinX = Math.min(...this.selection.map(c => c.x)) - padding;
-    // const newMaxX = Math.max(...this.selection.map(c => c.x + c.width)) + padding;
-
-    // const newMinY = Math.min(...this.selection.map(c => c.y)) - padding;
-    // const newMaxY = Math.max(...this.selection.map(c => c.y + c.height)) + padding;
-
-    // this.selectionBox = {
-    //   width: (newMaxX - newMinX),
-    //   height: (newMaxY - newMinY),
-    //   x: newMinX,
-    //   y: newMinY
-    // };
-
-    this.adjustSelectionBoxAferSelection();
+  this.adjustSelectionBoxAferSelection();
   };
 
   //TODO: combine into one function by entering a negative or positve value
-  public handleZoomOut(scaleInterval: number = this.scaleInterval): void {
-    if (this.scale - scaleInterval < .05) {
-      return;
+  public handleZoom(scaleInterval: number = this.scaleInterval, flag: string): void {
+    if (flag === 'out') {
+      if (this.scale - scaleInterval < .05) {
+        return;
+      }
+      this.scale -= scaleInterval;
     }
-
-    this.scale -= scaleInterval;
-    this.canvasHeight = this.originalCanvasHeight * this.scale; //make smaller
-    this.canvasWidth = this.originalCanvasWidth * this.scale;
+    else if (flag === 'in') {
+      if (this.scale + scaleInterval > 4) {
+        return;
+      }
+      this.scale += scaleInterval;
+    }
     this.update();
   }
 
-  //TODO: combine into one function by entering a negative or positve value
-  public handleZoomIn(scaleInterval: number = this.scaleInterval): void {
-    if (this.scale + scaleInterval > 4) {
-      return;
-    }
-
-    this.scale += scaleInterval;
-    this.canvasHeight = this.originalCanvasHeight * this.scale; //make bigger
-    this.canvasWidth = this.originalCanvasWidth * this.scale;
-    this.update();
-  };
-
   public handleZoomTo(scale: number): void {
-    const image_loc = {
-      x: this.midX + (window.scrollX),
-      y: this.midY +(window.scrollY)
-    }
-    const zoom_point = { x: image_loc.x / this.scale, y: image_loc.y / this.scale }
+    this.previousScale = this.scale;
     this.scale = scale;
-    this.canvasHeight = this.originalCanvasHeight * this.scale;
-    this.canvasWidth = this.originalCanvasWidth * this.scale;
     this.update();
-    const zoom_point_new = {
-      x: (zoom_point.x ) * this.scale,
-      y: (zoom_point.y ) * this.scale,
-    }
-    // console.log(window.scrollX)
-    const newScroll = {
-      x: zoom_point_new.x - image_loc.x,
-      y: zoom_point_new.y - image_loc.y
-    }
-    //* Scroll window by that amount
-    window.scrollBy(newScroll.x, newScroll.y);
+    this.setScrollPosition();
   }
 
   @HostListener('body:mouseleave', ['$event'])
@@ -353,30 +299,22 @@ export class AppComponent implements OnInit {
     // need to validate if this works on mac
     //* TODO: Zoom around point can be optimized
     const ctrlKeyPressed = event.ctrlKey || event.metaKey;
-
     if (!ctrlKeyPressed) {
       return;
     }
-
-    const offset = { x: window.scrollX, y: window.scrollY };
-
     //*x position of mouse
     const image_loc = {
       x: event.pageX,
       y: event.pageY
     }
-
     //*zoompoint based on current scale
     const zoom_point = { x: image_loc.x / this.scale, y: image_loc.y / this.scale }
-
-
     const scale = 0.05;
     if (event.deltaY > 0) {
-      this.handleZoomOut(scale);
+      this.handleZoom(scale, 'out');  //Second Parameter Decided Whether its Zoomin or Zoom Out
     } else {
-      this.handleZoomIn(scale);
+      this.handleZoom(scale, 'in');
     }
-
     // //*Find new zoom point scalled
     const zoom_point_new = {
       x: zoom_point.x * this.scale,
@@ -404,35 +342,25 @@ export class AppComponent implements OnInit {
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
-    const zoom_point = { x: (this.midX + (window.scrollX)) / this.scale, y: (this.midY +(window.scrollY)) / this.scale }
+    this.previousScale = this.scale;
     const minus = 189;
     const plus = 187;
-    
     if (event.code === 'Space' && event.target == document.body) {
       this.panningEnabled = true;
       event.preventDefault()
     } else if ((event.key === '-' || event.which === minus) && (event.ctrlKey || event.metaKey)) {
-      this.handleZoomOut();
+      this.handleZoom(this.scaleInterval, 'out');
       event.preventDefault();
     } else if ((event.key === '+' || event.which === plus) && (event.ctrlKey || event.metaKey)) {
-      this.handleZoomIn();
+      this.handleZoom(this.scaleInterval, 'in');
       event.preventDefault();
     }
-    const zoom_point_new = {
-      x: (zoom_point.x ) * this.scale,
-      y: (zoom_point.y ) * this.scale,
-    }
-    // console.log(window.scrollX)
-    const newScroll = {
-      x: zoom_point_new.x - (this.midX + (window.scrollX)),
-      y: zoom_point_new.y - (this.midY +(window.scrollY))
-    }
-    //* Scroll window by that amount
-    window.scrollBy(newScroll.x, newScroll.y);
-
+    this.setScrollPosition()
   }
 
   private update(): void {
+    this.canvasHeight = this.originalCanvasHeight * this.scale;
+    this.canvasWidth = this.originalCanvasWidth * this.scale;
     const matrix = `matrix(${this.scale},0,0,${this.scale},0,0)`;
     this.contents.nativeElement.style.transform = matrix;
   };
@@ -526,34 +454,11 @@ export class AppComponent implements OnInit {
     window.scrollBy(xamount, yamount);
   }
 
-  // public handleMouseScroll(e: WheelEvent) {
-  //   const image_loc = {
-  //     x: e.pageX + window.scrollX,
-  //     y: e.pageY + window.scrollY
-  //   }
-  // }
-  // public scrollPage(xamount: number, yamount: number) {
-  //   window.scrollBy(xamount, yamount);
-  //   // if (this.selection.length && this.status === Status.MOVE && this.cardPanning == false) {
-
-  //   //   this.selectionBox.x = this.mouseClick.left + (this.mouse.x - this.mouseClick.x);
-  //   //   this.selectionBox.y = this.mouseClick.top + (this.mouse.y - this.mouseClick.y);
-  //   // } else 
-  //   // if (this.selection.length && this.status === Status.MOVE && this.cardPanning == true) {
-  //   //   //Pan from the card
-  //   //   // this.selectionBox.x = this.selectionBox.x + (1 * (1 / this.scale));
-  //   //   // this.selectionBox.y = this.selectionBox.y + (this.panSpeedPositive * (1 /this.scale));
-  //   // }
-  // }
-
   scrollXBox(panSpeed: number) {
     console.log('page');
     this.selectionBox.x = this.selectionBox.x + panSpeed * (1 / this.scale);
-    // this.selectionBox.x = this.selectionBox.x + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
-    // this.selectionBoxChange.emit(this.selectionBox);
     this.mouseClick.left = this.mouseClick.left + panSpeed * (1 / this.scale);
-    // this.boxPosition2.left = this.boxPosition2.left + panSpeed * (1 /this.scale);
-
+    
     this.selection.forEach(c => {
       c.x += panSpeed * (1 / this.scale);
       c.ox += panSpeed * (1 / this.scale);
@@ -562,11 +467,8 @@ export class AppComponent implements OnInit {
 
   scrollYBox(panSpeed: number) {
     this.selectionBox.y = this.selectionBox.y + panSpeed * (1 / this.scale);
-    // this.selectionBox.y = this.selectionBox.y + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
-    // this.selectionBoxChange.emit(this.selectionBox);
     this.mouseClick.top = this.mouseClick.top + panSpeed * (1 / this.scale);
-    // this.boxPosition2.top = this.boxPosition2.top + panSpeed * (1 /this.scale);
-
+    
     this.selection.forEach(c => {
       c.y += panSpeed * (1 / this.scale);
       c.oy += panSpeed * (1 / this.scale);
@@ -579,26 +481,32 @@ export class AppComponent implements OnInit {
 
   //ZoomOut Form Mid in Veiwport with UI Buttons
   public zoomButton(flag: string): void {
+    this.previousScale = this.scale;
+    if (flag === 'zoomout') {
+      this.handleZoom(this.scaleInterval, 'out');  //Second Parameter Decided Whether its Zoomin or Zoom Out
+    }
+    else if (flag === 'zoomin') {
+      this.handleZoom(this.scaleInterval, 'in');  //Second Parameter Decided Whether its Zoomin or Zoom Out
+    }
+    this.setScrollPosition()
+  }
+
+  //Set Zoom Position and Scroll Position at Mid of the active Viewport 
+  private setScrollPosition() {
     const image_loc = {
       x: this.midX + (window.scrollX),
-      y: this.midY +(window.scrollY)
+      y: this.midY + (window.scrollY)
     }
-    const zoom_point = { x: image_loc.x / this.scale, y: image_loc.y / this.scale }
-    if (flag ==='zoomout'){
-    this.handleZoomOut();
-    }
-    else if(flag === 'zoomin'){
-      this.handleZoomIn();
-    }
+    const zoom_point = { x: image_loc.x / this.previousScale, y: image_loc.y / this.previousScale };
     const zoom_point_new = {
-      x: zoom_point.x * this.scale,
-      y: zoom_point.y * this.scale,
-    }
-    console.log(zoom_point)
+      x: (zoom_point.x) * this.scale,
+      y: (zoom_point.y) * this.scale,
+    };
+    // console.log(window.scrollX)
     const newScroll = {
       x: zoom_point_new.x - image_loc.x,
       y: zoom_point_new.y - image_loc.y
-    }
+    };
     //* Scroll window by that amount
     window.scrollBy(newScroll.x, newScroll.y);
   }
