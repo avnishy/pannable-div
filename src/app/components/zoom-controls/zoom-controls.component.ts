@@ -12,7 +12,7 @@ export class ZoomControlsComponent {
 
   @Input() zoomLevel: number = 1;
 
-  public levels = [0.05, 0.5, 1, 1.5, 2, 4];
+  public levels = [0.1, 0.5, 1, 1.5, 2, 4];
   public showLevels = false;
 
   public handleLevelDisplay(): void {

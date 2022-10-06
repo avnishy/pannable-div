@@ -280,9 +280,10 @@ export class AppComponent implements OnInit {
 
   // TODO: combine into one function by entering a negative or positve value
   public handleZoomOut(scaleInterval: number = this.scaleInterval, scrollToCenter: boolean = true): void {
-    if (this.scale - scaleInterval < .05) {
+    if (!this.isValidScale(this.scale - scaleInterval)) {
       return;
     }
+
     this.previousScale = this.scale;
     this.scale -= scaleInterval;
     this.canvasHeight = this.originalCanvasHeight * this.scale; //make smaller
@@ -293,9 +294,11 @@ export class AppComponent implements OnInit {
 
   // TODO: combine into one function by entering a negative or positve value
   public handleZoomIn(scaleInterval: number = this.scaleInterval, scrollToCenter: boolean = true): void {
-    if (this.scale + scaleInterval > 4) {
+
+    if (!this.isValidScale(this.scale + scaleInterval)) {
       return;
     }
+
     this.previousScale = this.scale;
     this.scale += scaleInterval;
     this.canvasHeight = this.originalCanvasHeight * this.scale; //make bigger
@@ -305,6 +308,10 @@ export class AppComponent implements OnInit {
   };
 
   public handleZoomTo(scale: number): void {
+    if (!this.isValidScale(scale)) {
+      return;
+    }
+
     this.previousScale = this.scale;
     this.scale = scale;
     this.canvasHeight = this.originalCanvasHeight * this.scale;
@@ -545,6 +552,10 @@ export class AppComponent implements OnInit {
 
     //* Scroll window by that amount
     window.scrollBy(newScroll.x, newScroll.y);
+  }
+
+  private isValidScale(scale: number): boolean {
+    return !(scale < 0.1 || scale > 4);
   }
 
 }
