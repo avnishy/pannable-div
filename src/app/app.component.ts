@@ -555,7 +555,7 @@ export class AppComponent implements OnInit {
   }
 
   private isValidScale(scale: number): boolean {
-    return !(scale < 0.1 || scale > 4);
+    return !(scale < 0.099 || scale > 4);
   }
 
 }
