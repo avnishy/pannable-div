@@ -88,7 +88,10 @@ export class AppComponent implements OnInit {
     this.panTrigger = false;
     this.obs = this.src.subscribe(value => {
 
-      if (this.panTrigger == true) {
+      if (this.panTrigger === true) {
+        if (!this.canMove()) {
+          return;
+        }
 
         if (this.mouse.x < this.panRangeL && this.mouse.y > this.panRangeL && this.mouse.y < this.innerHeightScaled - this.panRangeR && window.scrollX != 0) {
           // console.log('left')
@@ -201,11 +204,32 @@ export class AppComponent implements OnInit {
     this.adjustSelectionBoxAferSelection();
   }
 
+  private canMove(x?: number, y?: number): boolean {
+    x = x ?? this.selectionBox.x;
+    y = y ?? this.selectionBox.y;
+
+    const grid = document.querySelector('.grid')?.getBoundingClientRect();
+    const canvasWidth = grid?.width ?? 0;
+    const canvasHeight = grid?.height ?? 0;
+
+    if (
+      (this.selectionBox.width + x + 100) > canvasWidth / this.scale ||
+      x < 0 ||
+      (this.selectionBox.height + y + 100) > canvasHeight / this.scale ||
+      y < 0) {
+      return false;
+    }
+
+    return true;
+
+  }
+
   public handleMousemove(event: MouseEvent): void {
     this.mouse = { //should be / by scale
       x: event.clientX / this.scale,
       y: event.clientY / this.scale
     };
+
     //TODO: add mosue page on mouse move
     this.mousePage = {
       x: event.pageX,
@@ -217,13 +241,22 @@ export class AppComponent implements OnInit {
 
     // if (this.selection.length && this.status === Status.MOVE && this.isCardPanning == false) {
     if (this.selection.length && this.status === Status.MOVE) {
+      const xChange = ((this.mousePage.x - this.mouseClickPage.x) / this.scale);
+      const yChange = ((this.mousePage.y - this.mouseClickPage.y) / this.scale);
+      const x = this.mouseClickPage.left + xChange;
+      const y = this.mouseClickPage.top + yChange;
+      
+      if (!this.canMove(x, y)) {
+        return;
+      }
+
       //Updating it to be the amount that the card has moved (scaled)
-      this.selectionBox.x = this.mouseClickPage.left + ((this.mousePage.x - this.mouseClickPage.x) / this.scale);
-      this.selectionBox.y = this.mouseClickPage.top + ((this.mousePage.y - this.mouseClickPage.y) / this.scale);
+      this.selectionBox.x = x;
+      this.selectionBox.y = y;
 
       this.selection.forEach((c) => {
-        c.x = c.ox + (this.mouse.x - this.mouseClick.x / this.scale);
-        c.y = c.oy + (this.mouse.y - this.mouseClick.y / this.scale);
+        c.x = c.ox + xChange;
+        c.y = c.oy + yChange;
       });
 
     } else if (this.isPanning) {
@@ -496,12 +529,12 @@ export class AppComponent implements OnInit {
     this.selectionBox.x = this.selectionBox.x + panSpeed * (1 / this.scale);
     // this.selectionBox.x = this.selectionBox.x + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
     // this.selectionBoxChange.emit(this.selectionBox);
-    this.mouseClick.left = this.mouseClick.left + panSpeed * (1 / this.scale);
+    // this.mouseClick.left = this.mouseClick.left + panSpeed * (1 / this.scale);
     // this.boxPosition2.left = this.boxPosition2.left + panSpeed * (1 /this.scale);
 
     this.selection.forEach(c => {
       c.x += panSpeed * (1 / this.scale);
-      c.ox += panSpeed * (1 / this.scale);
+      // c.ox += panSpeed * (1 / this.scale);
     });
   }
 
@@ -509,12 +542,12 @@ export class AppComponent implements OnInit {
     this.selectionBox.y = this.selectionBox.y + panSpeed * (1 / this.scale);
     // this.selectionBox.y = this.selectionBox.y + ((panSpeed * (1 /this.scale)) / this.numberOfCardsSelected);
     // this.selectionBoxChange.emit(this.selectionBox);
-    this.mouseClick.top = this.mouseClick.top + panSpeed * (1 / this.scale);
+    // this.mouseClick.top = this.mouseClick.top + panSpeed * (1 / this.scale);
     // this.boxPosition2.top = this.boxPosition2.top + panSpeed * (1 /this.scale);
 
     this.selection.forEach(c => {
       c.y += panSpeed * (1 / this.scale);
-      c.oy += panSpeed * (1 / this.scale);
+      // c.oy += panSpeed * (1 / this.scale);
     });
   }
 
