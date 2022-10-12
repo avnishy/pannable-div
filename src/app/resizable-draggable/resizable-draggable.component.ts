@@ -105,57 +105,57 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
     else if (this.status === Status.RESIZELEFT) this.resizeLeft();
   }
 
-  //TODO: freestyle resizes add in scrollX + Y to calculations and reneable
-  private resizeTL() { //TODO: Implement logic to ensure its within boundaries wihtout moving it 
-    const width = this.boxPosition2.width - (this.mouse.x - this.mouseClick.x);
-    const height = this.boxPosition2.height - (this.mouse.y - this.mouseClick.y);
-    if (width > this.minSize) {
-      const left = this.mouseClick.left + (this.mouse.x - this.mouseClick.x);
-      this.card.width = width;
-      this.card.x = left;
-    }
-    if (height > this.minSize) {
-      const top = this.mouseClick.top + (this.mouse.y - this.mouseClick.y);
-      this.card.height = height;
-      this.card.y = top;
-    }
-  }
+  // //TODO: freestyle resizes add in scrollX + Y to calculations and reneable
+  // private resizeTL() { //TODO: Implement logic to ensure its within boundaries wihtout moving it 
+  //   const width = this.boxPosition2.width - (this.mouse.x - this.mouseClick.x);
+  //   const height = this.boxPosition2.height - (this.mouse.y - this.mouseClick.y);
+  //   if (width > this.minSize) {
+  //     const left = this.mouseClick.left + (this.mouse.x - this.mouseClick.x);
+  //     this.card.width = width;
+  //     this.card.x = left;
+  //   }
+  //   if (height > this.minSize) {
+  //     const top = this.mouseClick.top + (this.mouse.y - this.mouseClick.y);
+  //     this.card.height = height;
+  //     this.card.y = top;
+  //   }
+  // }
 
-  private resizeTR() { //TODO: Implement logic to ensure its within boundaries wihtout moving it
-    const width = this.boxPosition2.width + (this.mouse.x - this.mouseClick.x);
-    const height = this.boxPosition2.height - (this.mouse.y - this.mouseClick.y);
-    if (width > this.minSize) {
-      this.card.width = width;
-    }
-    if (height > this.minSize) {
-      const top = this.mouseClick.top + (this.mouse.y - this.mouseClick.y);
-      this.card.height = height;
-      this.card.y = top;
-    }
-  }
-  private resizeBL() { //TODO: Implement logic to ensure its within boundaries wihtout moving it
-    const width = this.boxPosition2.width - (this.mouse.x - this.mouseClick.x);
-    const height = this.boxPosition2.height + (this.mouse.y - this.mouseClick.y);
-    if (width > this.minSize) {
-      const left = this.mouseClick.left + (this.mouse.x - this.mouseClick.x);
-      this.card.width = width;
-      this.card.x = left;
-    }
-    if (height > this.minSize) {
-      this.card.height = height;
-    }
-  }
+  // private resizeTR() { //TODO: Implement logic to ensure its within boundaries wihtout moving it
+  //   const width = this.boxPosition2.width + (this.mouse.x - this.mouseClick.x);
+  //   const height = this.boxPosition2.height - (this.mouse.y - this.mouseClick.y);
+  //   if (width > this.minSize) {
+  //     this.card.width = width;
+  //   }
+  //   if (height > this.minSize) {
+  //     const top = this.mouseClick.top + (this.mouse.y - this.mouseClick.y);
+  //     this.card.height = height;
+  //     this.card.y = top;
+  //   }
+  // }
+  // private resizeBL() { //TODO: Implement logic to ensure its within boundaries wihtout moving it
+  //   const width = this.boxPosition2.width - (this.mouse.x - this.mouseClick.x);
+  //   const height = this.boxPosition2.height + (this.mouse.y - this.mouseClick.y);
+  //   if (width > this.minSize) {
+  //     const left = this.mouseClick.left + (this.mouse.x - this.mouseClick.x);
+  //     this.card.width = width;
+  //     this.card.x = left;
+  //   }
+  //   if (height > this.minSize) {
+  //     this.card.height = height;
+  //   }
+  // }
 
-  private resize() { //TODO Label BR & Implement logic to ensure its within boundaries wihtout moving it
-    const width = this.mouse.x - this.boxPosition.left;
-    const height = this.mouse.y - this.boxPosition.top;
-    if (width > this.minSize) {
-      this.card.width = width;
-    }
-    if (height > this.minSize) {
-      this.card.height = height;
-    }
-  }
+  // private resize() { //TODO Label BR & Implement logic to ensure its within boundaries wihtout moving it
+  //   const width = this.mouse.x - this.boxPosition.left;
+  //   const height = this.mouse.y - this.boxPosition.top;
+  //   if (width > this.minSize) {
+  //     this.card.width = width;
+  //   }
+  //   if (height > this.minSize) {
+  //     this.card.height = height;
+  //   }
+  // }
 
   //TODO: Temporarily disbled boundary controls (re-enable later) resizing with boundary controls.ts in Docs
 
@@ -216,21 +216,21 @@ export class ResizableDraggableComponent implements OnInit, AfterViewInit, OnCha
     }
   }
 
-  private resizeCondMeet() {
-    return (this.mouse.x < this.containerPos.right && this.mouse.y < this.containerPos.bottom);
-  }
+  // private resizeCondMeet() {
+  //   return (this.mouse.x < this.containerPos.right && this.mouse.y < this.containerPos.bottom);
+  // }
 
-  //TODO: ! update movelogic to cater for panned
-  private moveCondMeet() {
-    const offsetLeft = this.mouseClick.x - this.boxPosition.left;
-    const offsetRight = this.card.width - offsetLeft;
-    const offsetTop = this.mouseClick.y - this.boxPosition.top;
-    const offsetBottom = this.card.height - offsetTop;
-    return (
-      this.mouse.x > this.containerPos.left + offsetLeft &&
-      this.mouse.x < this.containerPos.right - offsetRight &&
-      this.mouse.y > this.containerPos.top + offsetTop &&
-      this.mouse.y < this.containerPos.bottom - offsetBottom
-    );
-  }
+  // //TODO: ! update movelogic to cater for panned
+  // private moveCondMeet() {
+  //   const offsetLeft = this.mouseClick.x - this.boxPosition.left;
+  //   const offsetRight = this.card.width - offsetLeft;
+  //   const offsetTop = this.mouseClick.y - this.boxPosition.top;
+  //   const offsetBottom = this.card.height - offsetTop;
+  //   return (
+  //     this.mouse.x > this.containerPos.left + offsetLeft &&
+  //     this.mouse.x < this.containerPos.right - offsetRight &&
+  //     this.mouse.y > this.containerPos.top + offsetTop &&
+  //     this.mouse.y < this.containerPos.bottom - offsetBottom
+  //   );
+  // }
 }

@@ -19,7 +19,7 @@
     "@angular/platform-browser": "^14.0.0",
     "@angular/platform-browser-dynamic": "^14.0.0",
     "@angular/router": "^14.0.0",
-    "@imgix/angular": "^1.1.9",
+    "@imgix/angular": "^1.1.10",
     "express": "^4.18.1",
     "path": "^0.12.7",
     "rxjs": "~7.5.0",
